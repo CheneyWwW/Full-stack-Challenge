@@ -1,0 +1,4 @@
+image_id,split,label,category,source_url,brand,local_path,fixture_id,notes
+strong_phone_case_001,holdout,strong,phone_accessories,fixture://sample,strong-brand,,strong_phone_case_001,Fixture only. Replace with a real public ad image.
+weak_marketplace_case_001,holdout,weak,phone_accessories,fixture://sample,marketplace,,weak_marketplace_case_001,Fixture only. Replace with a real public listing image.
+

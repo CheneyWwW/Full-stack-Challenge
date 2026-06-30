@@ -1,0 +1,49 @@
+{
+  "image_id": "strong_phone_case_001",
+  "model": "fixture/manual-v0",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "hero",
+      "confidence": 0.92,
+      "rationale": "The product is the dominant object and can be identified immediately."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.86,
+      "rationale": "The accessory is shown with a phone in a realistic use context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.84,
+      "rationale": "The creative makes a concrete buyer benefit clear."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.9,
+      "rationale": "The product and text have a clear eye path."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "tactile",
+      "confidence": 0.8,
+      "rationale": "Material and construction details are visible."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "subtle",
+      "confidence": 0.6,
+      "rationale": "A light brand cue is visible but not central."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.88,
+      "rationale": "The image would remain readable on a mobile feed."
+    }
+  ]
+}
+

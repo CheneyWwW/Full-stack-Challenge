@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ad-intelligence-takehome"
+version = "0.1.0"
+description = "Spec-as-data ad image scorer for the Heedo DE-TH-03 take-home."
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.55.0",
+    "pydantic>=2.7.0",
+    "python-dotenv>=1.0.1",
+    "PyYAML>=6.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["adint*"]
+

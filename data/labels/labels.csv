@@ -1,0 +1,4 @@
+image_id,label,labeler,rationale,created_at
+strong_phone_case_001,strong,self,Fixture: clean hero product with clear benefit and context,2026-06-30
+weak_marketplace_case_001,weak,self,Fixture: cluttered marketplace-style image with weak hierarchy,2026-06-30
+

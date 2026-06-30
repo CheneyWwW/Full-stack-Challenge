@@ -1,0 +1,49 @@
+{
+  "image_id": "weak_marketplace_case_001",
+  "model": "fixture/manual-v0",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.78,
+      "rationale": "The product is visible but competes with many surrounding elements."
+    },
+    {
+      "key": "use_case_context",
+      "level": "isolated",
+      "confidence": 0.82,
+      "rationale": "The presentation is mostly catalog-like and does not show ownership context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "generic",
+      "confidence": 0.68,
+      "rationale": "There is a vague value claim but no specific benefit."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "cluttered",
+      "confidence": 0.86,
+      "rationale": "Multiple elements compete and the eye path is unclear."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "flat",
+      "confidence": 0.76,
+      "rationale": "The product appears flat and does not communicate material quality."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "none",
+      "confidence": 0.7,
+      "rationale": "No credible trust cue is visible."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "medium",
+      "confidence": 0.72,
+      "rationale": "Some elements are readable, but the creative is not crisp at small size."
+    }
+  ]
+}
+
