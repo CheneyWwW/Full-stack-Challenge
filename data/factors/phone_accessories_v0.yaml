@@ -13,7 +13,7 @@ factors:
       - key: lost
         points: -8
         desc: The product is hard to locate or understand within two seconds.
-    evidence: "Seed hypothesis. Replace after mining corpus: compare strong ads vs weak listings."
+    evidence: "Corpus v0 manual mining: hero-level product prominence appeared in 12/20 strong vs 15/20 weak. This is necessary for scoring but not a strong separator by itself."
   - key: use_case_context
     question: Does the image show a clear use case or ownership moment for the accessory?
     levels:
@@ -26,7 +26,7 @@ factors:
       - key: isolated
         points: -4
         desc: The product is isolated with no useful context or only a generic marketplace presentation.
-    evidence: "Seed hypothesis. Mine examples where strong creatives show context versus catalog-only weak images."
+    evidence: "Corpus v0 manual mining: in_use or contextual appeared in 10/20 strong vs 7/20 weak. Useful but weaker than expected because several marketplace images show handheld product photos."
   - key: benefit_clarity
     question: Is one concrete buyer benefit visually or textually clear?
     levels:
@@ -39,7 +39,7 @@ factors:
       - key: absent
         points: -6
         desc: The image does not make a benefit legible.
-    evidence: "Seed hypothesis. Validate with labels and error cases."
+    evidence: "Corpus v0 manual mining: specific buyer benefit appeared in 15/20 strong vs 1/20 weak. This is the strongest separator in the current corpus."
   - key: visual_hierarchy
     question: Are product, text, and supporting elements arranged with a clean hierarchy?
     levels:
@@ -52,7 +52,7 @@ factors:
       - key: cluttered
         points: -7
         desc: The image is crowded, confusing, text-heavy, or visually noisy.
-    evidence: "Seed hypothesis. Strong ads should have cleaner hierarchy than marketplace collages."
+    evidence: "Corpus v0 manual mining: clean hierarchy appeared in 18/20 strong vs 14/20 weak. It helps catch cluttered listings but is not sufficient alone."
   - key: material_and_detail
     question: Does the image make material quality, finish, or key construction details visible?
     levels:
@@ -65,7 +65,7 @@ factors:
       - key: flat
         points: -4
         desc: The image looks flat, low-detail, over-compressed, or fails to show quality cues.
-    evidence: "Seed hypothesis. Tune after checking false positives on minimalist premium ads."
+    evidence: "Corpus v0 manual mining: tactile material/detail appeared in 3/20 strong vs 3/20 weak. Keep as a low-confidence factor until calibration or richer data proves value."
   - key: brand_trust_signal
     question: Does the image provide a credible trust signal without overwhelming the creative?
     levels:
@@ -78,7 +78,7 @@ factors:
       - key: none
         points: 0
         desc: No clear trust signal is visible.
-    evidence: "Seed hypothesis. Keep low weight until labels prove this separates performance."
+    evidence: "Corpus v0 manual mining: credible or subtle trust signal appeared in 20/20 strong vs 6/20 weak. Strong separator but should be watched for brand/logo bias."
   - key: contrast_and_legibility
     question: Is the creative readable on a small mobile feed screen?
     levels:
@@ -91,5 +91,4 @@ factors:
       - key: low
         points: -5
         desc: Low contrast, blurry, tiny text, or visual elements blend together.
-    evidence: "Seed hypothesis. Measure agreement against manual small-screen labels."
-
+    evidence: "Corpus v0 manual mining: high contrast/legibility appeared in 18/20 strong vs 12/20 weak. Moderately useful for small-feed readability."

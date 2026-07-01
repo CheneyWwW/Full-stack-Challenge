@@ -58,9 +58,20 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
   - 无缺失图片
   - manifest 和 labels 一一对应
 
+第三阶段完成的是 factor mining：
+
+- 新增 `data/factor_mining.csv`
+  - 每张图片按 7 个 factor 做人工 level 标注
+  - level 使用 YAML 中的同一套离散值
+- 新增 `scripts/summarize_factor_mining.py`
+  - 统计 strong / weak 在每个 factor 上的分布
+- 更新 `data/factors/phone_accessories_v0.yaml`
+  - 将 seed evidence 替换成 corpus v0 的人工观察计数
+  - 诚实标注弱分离 factor，例如 `product_prominence` 和 `material_and_detail`
+
 还未完成：
 
-- corpus-backed factor evidence
+- VLM judgments for the real 40-image corpus
 - train / holdout calibration
 - drift test
 - final report 和 error analysis
@@ -115,6 +126,7 @@ AI_API_KEY=your_token_here
 
 - `adint/`：CLI、judge provider、spec loading、scoring
 - `data/factors/phone_accessories_v0.yaml`：factor table
+- `data/factor_mining.csv`：人工 factor mining 结果
 - `data/corpus_manifest.csv`：图片来源、split、label
 - `data/labels/labels.csv`：标签和标注理由
 - `fixtures/judgments/`：缓存 judgments

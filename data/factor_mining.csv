@@ -1,0 +1,42 @@
+image_id,split,label,product_prominence,use_case_context,benefit_clarity,visual_hierarchy,material_and_detail,brand_trust_signal,contrast_and_legibility,mining_notes
+strong_case_001,train,strong,hero,isolated,generic,clean,adequate,subtle,high,Promotional ad with product and offer but little use context
+strong_case_002,train,strong,present,isolated,specific,busy,adequate,subtle,high,Sale creative with multiple visible products and clear discount
+strong_case_003,train,strong,hero,in_use,specific,clean,adequate,subtle,high,Case shown in hand with charm-ready benefit
+strong_case_004,train,strong,hero,contextual,specific,clean,tactile,credible,high,Outdoor durability image with rugged context
+strong_case_005,train,strong,hero,isolated,specific,clean,adequate,subtle,high,Simple product hero with protection copy
+strong_case_006,train,strong,hero,in_use,specific,clean,adequate,credible,high,Lifestyle hand-held creative with clear new case message
+strong_case_007,train,strong,present,contextual,generic,busy,adequate,subtle,medium,Product lineup with event context but crowded hierarchy
+strong_case_008,train,strong,hero,isolated,specific,clean,adequate,credible,high,Award signal and product accessory layout
+strong_case_009,train,strong,hero,isolated,specific,clean,adequate,subtle,high,Bold launch graphic with magnetic thin case benefit
+strong_case_010,train,strong,present,contextual,generic,clean,adequate,subtle,high,Color launch creative with lifestyle styling
+strong_case_011,train,strong,hero,isolated,specific,clean,adequate,subtle,high,Mirror case feature is clear in a clean product layout
+strong_case_012,train,strong,hero,isolated,specific,clean,adequate,credible,high,Certification-style trust cue and product close-up
+strong_case_013,train,strong,present,in_use,specific,clean,tactile,credible,high,Hero banner with outdoor use and durability copy
+strong_case_014,train,strong,present,contextual,specific,clean,adequate,credible,high,Adventure-themed product grouping with readiness message
+strong_case_015,train,strong,hero,isolated,generic,clean,adequate,credible,high,Brand campaign visual with concise message
+strong_case_016,holdout,strong,hero,contextual,specific,clean,adequate,credible,high,Protection claim with rough terrain product context
+strong_case_017,holdout,strong,present,isolated,specific,clean,adequate,credible,high,Sustainability benefit with product visibility
+strong_case_018,holdout,strong,present,in_use,specific,clean,adequate,credible,medium,Lifestyle campaign banner with product and brand story
+strong_case_019,holdout,strong,hero,in_use,generic,clean,adequate,subtle,high,Product in hand with premium positioning
+strong_case_020,holdout,strong,present,isolated,specific,clean,tactile,credible,high,Premium hero with multiple cases and readable product-line copy
+weak_case_001,train,weak,hero,isolated,generic,clean,adequate,none,high,Decorative product image with limited campaign message
+weak_case_002,train,weak,hero,isolated,absent,clean,flat,none,high,Isolated design-focused listing image
+weak_case_003,train,weak,present,contextual,generic,cluttered,adequate,none,medium,Busy marketplace collage with many case angles
+weak_case_004,train,weak,present,contextual,generic,busy,adequate,subtle,medium,Decorative product scene with weak benefit clarity
+weak_case_005,train,weak,hero,isolated,absent,clean,flat,none,high,Isolated render with no use context
+weak_case_006,train,weak,hero,isolated,absent,busy,adequate,none,high,Generic listing render showing front and back
+weak_case_007,train,weak,hero,isolated,absent,clean,adequate,subtle,medium,Plain isolated product image
+weak_case_008,train,weak,hero,isolated,absent,clean,adequate,none,high,Simple color-focused product render
+weak_case_009,train,weak,hero,isolated,absent,clean,adequate,subtle,high,Plain isolated product render
+weak_case_010,train,weak,present,isolated,specific,busy,adequate,none,medium,Protection claim exists but layout is listing-like
+weak_case_011,train,weak,present,isolated,absent,clean,flat,none,high,Color lineup without clear ad story
+weak_case_012,train,weak,hero,in_use,absent,busy,tactile,none,medium,Handheld product photo with weak benefit message
+weak_case_013,train,weak,hero,in_use,absent,clean,adequate,none,medium,Handheld listing photo without campaign copy
+weak_case_014,train,weak,present,contextual,absent,busy,adequate,none,medium,Packaging and product shown with limited ad appeal
+weak_case_015,train,weak,hero,isolated,absent,clean,flat,none,high,Minimal isolated product presentation
+weak_case_016,holdout,weak,hero,in_use,generic,clean,tactile,none,high,Handheld product photo but no polished ad hierarchy
+weak_case_017,holdout,weak,hero,isolated,absent,clean,adequate,none,high,Clean render with little buyer benefit
+weak_case_018,holdout,weak,hero,isolated,generic,clean,adequate,subtle,high,Listing creative with generic product story
+weak_case_019,holdout,weak,hero,isolated,absent,clean,tactile,subtle,high,Simple product hero without clear differentiated benefit
+weak_case_020,holdout,weak,hero,contextual,absent,clean,adequate,subtle,medium,Decorative marketplace image with weak use context
+
