@@ -1,0 +1,57 @@
+{
+  "image_id": "weak_case_013",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "hero",
+      "confidence": 0.0,
+      "rationale": "The product is the single dominant focal point and fills enough of the frame to identify instantly."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.0,
+      "rationale": "The accessory is shown being held, indicating a clear use moment."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.0,
+      "rationale": "The MagSafe feature is visually clear, indicating a specific benefit."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The arrangement of the product and hand is clear and easy to follow."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "tactile",
+      "confidence": 0.0,
+      "rationale": "The texture and finish of the case are visible, showcasing material quality."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The Apple logo provides a strong brand trust signal."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "The image has strong contrast and clear subject boundaries."
+    },
+    {
+      "key": "marketplace_listing_signal",
+      "level": "campaign_like",
+      "confidence": 0.0,
+      "rationale": "The image has a branded scene and clear product presentation, indicating campaign intent."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the single dominant focal point and fills enough of the frame to identify instantly.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"in_use\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The accessory is shown being held, indicating a clear use moment.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"specific\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The MagSafe feature is visually clear, indicating a specific benefit.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The arrangement of the product and hand is clear and easy to follow.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"tactile\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The texture and finish of the case are visible, showcasing material quality.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The Apple logo provides a strong brand trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image has strong contrast and clear subject boundaries.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"campaign_like\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image has a branded scene and clear product presentation, indicating campaign intent.\"\n    }\n  ]\n}"
+  }
+}

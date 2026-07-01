@@ -1,0 +1,57 @@
+{
+  "image_id": "strong_case_018",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.0,
+      "rationale": "The product is visible but competes with the model and background elements."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.0,
+      "rationale": "The accessory is shown being held by a person, indicating a realistic use moment."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "generic",
+      "confidence": 0.0,
+      "rationale": "The image suggests a positive lifestyle but does not specify a concrete benefit."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "busy",
+      "confidence": 0.0,
+      "rationale": "The layout has competing elements and lacks clear spacing."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "adequate",
+      "confidence": 0.0,
+      "rationale": "The product is visible, but material quality is not emphasized."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The brand name is clearly presented, providing a trust signal."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "The image has strong contrast and is generally readable."
+    },
+    {
+      "key": "marketplace_listing_signal",
+      "level": "campaign_like",
+      "confidence": 0.0,
+      "rationale": "The image conveys a clear campaign idea with lifestyle context and ad copy."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with the model and background elements.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"in_use\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The accessory is shown being held by a person, indicating a realistic use moment.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"generic\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image suggests a positive lifestyle but does not specify a concrete benefit.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"busy\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout has competing elements and lacks clear spacing.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The brand name is clearly presented, providing a trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image has strong contrast and is generally readable.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"campaign_like\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image conveys a clear campaign idea with lifestyle context and ad copy.\"\n    }\n  ]\n}"
+  }
+}

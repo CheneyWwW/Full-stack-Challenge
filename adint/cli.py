@@ -31,12 +31,14 @@ def main() -> None:
     score_parser.add_argument("--spec", type=Path, default=DEFAULT_SPEC)
     score_parser.add_argument("--provider", choices=["fixture", "openai"], default="fixture")
     score_parser.add_argument("--image-id", help="Defaults to the image filename stem.")
+    score_parser.add_argument("--fixture-dir", type=Path, default=Path("fixtures/judgments"))
     score_parser.add_argument("--out", type=Path)
 
     batch_parser = subparsers.add_parser("batch")
     batch_parser.add_argument("--manifest", type=Path, default=Path("data/corpus_manifest.csv"))
     batch_parser.add_argument("--spec", type=Path, default=DEFAULT_SPEC)
     batch_parser.add_argument("--provider", choices=["fixture", "openai"], default="fixture")
+    batch_parser.add_argument("--fixture-dir", type=Path, default=Path("fixtures/judgments"))
     batch_parser.add_argument("--out", type=Path, default=Path("outputs/predictions.csv"))
 
     calibrate_parser = subparsers.add_parser("calibrate")
@@ -49,14 +51,14 @@ def main() -> None:
         spec = load_spec(args.spec)
         print(f"OK: {args.spec} ({spec.category}, {len(spec.factors)} factors)")
     elif args.command == "score":
-        result = run_score(args.image, args.spec, args.provider, args.image_id)
+        result = run_score(args.image, args.spec, args.provider, args.image_id, args.fixture_dir)
         payload = result.model_dump(mode="json")
         if args.out:
             args.out.parent.mkdir(parents=True, exist_ok=True)
             args.out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         print(json.dumps(payload, indent=2))
     elif args.command == "batch":
-        run_batch(args.manifest, args.spec, args.provider, args.out)
+        run_batch(args.manifest, args.spec, args.provider, args.fixture_dir, args.out)
     elif args.command == "calibrate":
         run_calibrate(args.manifest, args.predictions)
 
@@ -66,21 +68,28 @@ def run_score(
     spec_path: Path,
     provider: str,
     image_id: str | None,
+    fixture_dir: Path,
 ) -> ScoreResult:
     spec = load_spec(spec_path)
     resolved_image_id = image_id or image_path.stem
-    judge = FixtureJudge() if provider == "fixture" else OpenAIVisionJudge()
+    judge = FixtureJudge(fixture_dir) if provider == "fixture" else OpenAIVisionJudge()
     judgment = judge.judge(image_path, spec, resolved_image_id)
     return score_judgment(judgment, spec)
 
 
-def run_batch(manifest_path: Path, spec_path: Path, provider: str, out_path: Path) -> None:
+def run_batch(
+    manifest_path: Path,
+    spec_path: Path,
+    provider: str,
+    fixture_dir: Path,
+    out_path: Path,
+) -> None:
     rows = list(csv.DictReader(manifest_path.open("r", encoding="utf-8-sig")))
     results = []
     for row in rows:
         image_id = row.get("fixture_id") or row["image_id"]
         image_path = Path(row["local_path"]) if row.get("local_path") else Path(image_id)
-        result = run_score(image_path, spec_path, provider, image_id)
+        result = run_score(image_path, spec_path, provider, image_id, fixture_dir)
         results.append(
             {
                 "image_id": row["image_id"],
@@ -149,4 +158,3 @@ def _pairwise_separation(strong: list[float], weak: list[float]) -> float:
             elif strong_score == weak_score:
                 wins += 0.5
     return wins / total
-

@@ -69,7 +69,7 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
   - 将 seed evidence 替换成 corpus v0 的人工观察计数
   - 诚实标注弱分离 factor，例如 `product_prominence` 和 `material_and_detail`
 
-第四阶段进行中：VLM judgment 生成与失败案例处理：
+第四阶段：VLM judgment 生成与失败案例处理：
 
 - 新增 `scripts/generate_judgment_fixtures.py`
   - 从 `data/corpus_manifest.csv` 批量读取真实 corpus
@@ -98,10 +98,58 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
   - `scripts/tune_factor_weights.py` 使用类似 focal loss 的目标函数，默认给 `weak` 样本更高权重，用来重点观察 false positive weak cases。
   - 该脚本只输出建议权重变化，不自动改 YAML；原因是当前样本量小，直接优化 points 容易过拟合。
   - 第一轮诊断显示：仅靠调整现有 7 个 factor 的 points 不能稳定解决 weak 高分问题，更合理的下一步是新增或强化 `marketplace/listing` 风格惩罚 factor。
+- 第五阶段 v1 首轮修复记录：
+  - 新增 `data/factors/phone_accessories_v1.yaml`
+  - 在 v0 的 7 个 factor 基础上增加 `marketplace_listing_signal`
+  - v1 judgments 单独保存到 `fixtures/judgments_v1/`，避免覆盖 v0 baseline
+  - CLI 新增 `--fixture-dir`，可以分别评估 v0 和 v1
+  - v1 全量 40 张结果：
+    - `strong_mean`: 77.75
+    - `weak_mean`: 60.15
+    - `mean_gap`: 17.6
+    - `pairwise_separation`: 0.700
+    - `threshold_50_accuracy`: 0.650
+  - 相比 v0 的变化：
+    - `weak_mean`: 63.0 -> 60.15，下降 2.85
+    - `mean_gap`: 11.4 -> 17.6，提升 6.2
+    - `threshold_50_accuracy`: 0.525 -> 0.650，提升 0.125
+    - `pairwise_separation`: 0.665 -> 0.700，略有提升
+  - v1 有效的部分：
+    - 12/20 weak 被 `marketplace_listing_signal` 判为 `generic_listing`
+    - 17/20 strong 被判为 `campaign_like`
+    - 整体上说明新增 factor 方向有效，能扩大 strong / weak 的平均分差
+  - v1 首轮错误分析：
+    - 证据来源：`outputs/predictions_v1.csv` 提供 v1 score / raw_points，`fixtures/judgments_v1/*.json` 提供新增 factor 的 level 和 rationale。以下结论都来自这两个文件，不是主观看图猜测。
+    - 主要失败模式：整体指标改善，但最重要的 weak false positives 没有被修掉，说明新增 factor 方向有效但边界不够严格。
+    - 证据表：
+
+      | Case | Label | v0 score | v1 score | v1 raw | `marketplace_listing_signal` | VLM rationale evidence |
+      | --- | --- | ---: | ---: | ---: | --- | --- |
+      | `weak_case_012` | weak | 100 | 100 | 46 | `campaign_like` | “clear campaign intent with a lifestyle presentation” |
+      | `weak_case_013` | weak | 100 | 100 | 46 | `campaign_like` | “branded scene and clear product presentation” |
+      | `weak_case_002` | weak | 89 | 96 | 42 | `campaign_like` | “campaign intent with a clear presentation” |
+      | `weak_case_016` | weak | 78 | 100 | 46 | `campaign_like` | “clear campaign intent with a lifestyle presentation” |
+      | `strong_case_011` | strong | 34 | 29 | -18 | `generic_listing` | “resembles a generic product listing rather than a campaign” |
+
+    - 从证据表推导出的结论：
+      - `weak_case_012` / `weak_case_013` / `weak_case_016` 都是人工 `weak`，但 v1 仍为 100，且新增 factor 都给了 `campaign_like`，说明 VLM 把 lifestyle-looking / hand-held product shot 当成 campaign。
+      - `weak_case_002` 从 89 升到 96，且新增 factor rationale 只说 “clear presentation”，说明原定义没有把普通商品展示和真正广告创意区分开。
+      - `strong_case_011` 从 34 降到 29，且新增 factor 给了 `generic_listing`，说明它是一个边界 false negative：人工标成 strong，但单图视觉上更像 product display。
+  - 修复动作：
+    - 已收紧 `marketplace_listing_signal` 的 `campaign_like` 定义：必须有明确 ad copy / benefit claim / brand-owned campaign context / launch-editorial presentation / benefit-linked lifestyle story。
+    - 已明确排除：单纯手持、MagSafe ring、Apple/device logo、clean background、professionally photographed product shot。
+    - 已扩大 `generic_listing` 定义：包含 generic hero image、compatibility/feature demo、product-page lifestyle shot with little narrative。
+    - 下一步必须用 `--overwrite` 重新生成 `fixtures/judgments_v1/`，否则仍然会使用旧 prompt 产生的 judgment。
+  - 缓存与限流说明：
+    - 当前 v0 的 40 张 judgments 已完整缓存于 `fixtures/judgments/`。
+    - v1 首轮的 40 张 judgments 已完整缓存于 `fixtures/judgments_v1/`，并用于上述 v1 指标和错误分析。
+    - 在收紧 `marketplace_listing_signal` 后，我尝试用 `--overwrite` 重新生成 v1 judgments，但 GitHub Models 返回 rate limit，因此本次提交保留 v1 首轮缓存结果、错误分析、已收紧的 v1 spec，以及可续跑的脚本能力。
+    - `scripts/generate_judgment_fixtures.py` 已支持 `--start-at`、`--max-retries` 和 `--retry-sleep`；当 API quota 恢复后，可以从失败样本继续覆盖生成，而不需要从头开始。
+    - 因此当前提交的评分结果是可复现的 fixture-based baseline；收紧后的 v1 spec 是下一轮 calibration step，不把未完成重跑伪装成已经完成的提升。
 
 还未完成：
 
-- train / holdout tuning after v0 error analysis
+- regenerate v1 judgments after tightened marketplace/listing definition
 - drift test
 - final report 和 error analysis
 
@@ -172,14 +220,57 @@ AI_API_KEY=your_token_here
 .\.venv\Scripts\python.exe scripts\tune_factor_weights.py --weak-alpha 5 --l2 0.001 --max-adjust 10
 ```
 
+运行 v1 marketplace/listing 修复实验：
+
+```powershell
+.\.venv\Scripts\python.exe -m adint validate-spec --spec data\factors\phone_accessories_v1.yaml
+
+.\.venv\Scripts\python.exe scripts\generate_judgment_fixtures.py `
+  --spec data\factors\phone_accessories_v1.yaml `
+  --out-dir fixtures\judgments_v1 `
+  --limit 2
+
+.\.venv\Scripts\python.exe scripts\generate_judgment_fixtures.py `
+  --spec data\factors\phone_accessories_v1.yaml `
+  --out-dir fixtures\judgments_v1 `
+  --overwrite
+
+.\.venv\Scripts\python.exe -m adint batch `
+  --spec data\factors\phone_accessories_v1.yaml `
+  --provider fixture `
+  --fixture-dir fixtures\judgments_v1 `
+  --out outputs\predictions_v1.csv
+
+.\.venv\Scripts\python.exe -m adint calibrate --predictions outputs\predictions_v1.csv
+```
+
+注意：如果 `marketplace_listing_signal` 的文字定义发生变化，必须用 `--overwrite` 重新生成 `fixtures/judgments_v1/`，否则评分仍然基于旧 prompt 产生的 judgment。
+
+如果生成中途遇到 GitHub Models rate limit，可以从失败的样本继续。例如失败在 `weak_case_003`：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_judgment_fixtures.py `
+  --spec data\factors\phone_accessories_v1.yaml `
+  --out-dir fixtures\judgments_v1 `
+  --overwrite `
+  --start-at weak_case_003 `
+  --sleep 3 `
+  --max-retries 6 `
+  --retry-sleep 90
+```
+
+这里必须保留 `--overwrite`，因为 `fixtures/judgments_v1/` 中失败点之后可能还是旧 prompt 生成的文件。
+
 ## Repository Map
 
 - `adint/`：CLI、judge provider、spec loading、scoring
-- `data/factors/phone_accessories_v0.yaml`：factor table
+- `data/factors/phone_accessories_v0.yaml`：v0 factor table
+- `data/factors/phone_accessories_v1.yaml`：v1 factor table with marketplace/listing penalty
 - `data/factor_mining.csv`：人工 factor mining 结果
 - `data/corpus_manifest.csv`：图片来源、split、label
 - `data/labels/labels.csv`：标签和标注理由
 - `fixtures/judgments/`：缓存 judgments
+- `fixtures/judgments_v1/`：v1 judgment cache after regeneration
 - `reports/REPORT_TEMPLATE.md`：最终报告模板
 - `scripts/WORKPLAN.md`：24 小时计划
 - `scripts/generate_judgment_fixtures.py`：批量生成 VLM judgment fixtures

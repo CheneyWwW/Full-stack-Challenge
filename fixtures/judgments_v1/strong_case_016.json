@@ -1,0 +1,57 @@
+{
+  "image_id": "strong_case_016",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "hero",
+      "confidence": 0.0,
+      "rationale": "The product is the single dominant focal point and fills enough of the frame to identify instantly."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.0,
+      "rationale": "The accessory is shown in a realistic context, suggesting its use and functionality."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.0,
+      "rationale": "The image clearly communicates a specific benefit of military drop protection."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The layout is clear, with a readable text and no distracting elements."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "tactile",
+      "confidence": 0.0,
+      "rationale": "The image showcases the texture and details of the product effectively."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The mention of military drop standards provides a credible trust signal."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "Strong contrast and clear boundaries make the creative easily readable."
+    },
+    {
+      "key": "marketplace_listing_signal",
+      "level": "campaign_like",
+      "confidence": 0.0,
+      "rationale": "The image conveys a clear campaign intent with a specific benefit claim."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the single dominant focal point and fills enough of the frame to identify instantly.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"in_use\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The accessory is shown in a realistic context, suggesting its use and functionality.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"specific\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image clearly communicates a specific benefit of military drop protection.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout is clear, with a readable text and no distracting elements.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"tactile\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image showcases the texture and details of the product effectively.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The mention of military drop standards provides a credible trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Strong contrast and clear boundaries make the creative easily readable.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"campaign_like\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image conveys a clear campaign intent with a specific benefit claim.\"\n    }\n  ]\n}"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "image_id": "strong_case_006",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.0,
+      "rationale": "The product is visible but competes with the person's hand and clothing."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.0,
+      "rationale": "The accessory is shown with a phone in a realistic context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.0,
+      "rationale": "The text suggests a clear benefit of having a new case."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The layout is clear with readable text and minimal distractions."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "adequate",
+      "confidence": 0.0,
+      "rationale": "The product is clear, but material quality is not emphasized."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The brand name is prominently displayed, providing a trust signal."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "Strong contrast and legible text make it readable on mobile."
+    },
+    {
+      "key": "marketplace_listing_signal",
+      "level": "campaign_like",
+      "confidence": 0.0,
+      "rationale": "The image conveys a clear campaign message with a lifestyle context."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with the person's hand and clothing.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"in_use\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The accessory is shown with a phone in a realistic context.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"specific\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The text suggests a clear benefit of having a new case.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout is clear with readable text and minimal distractions.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The brand name is prominently displayed, providing a trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Strong contrast and legible text make it readable on mobile.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"campaign_like\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image conveys a clear campaign message with a lifestyle context.\"\n    }\n  ]\n}"
+  }
+}

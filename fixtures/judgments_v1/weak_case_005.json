@@ -1,0 +1,57 @@
+{
+  "image_id": "weak_case_005",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.0,
+      "rationale": "The product is visible but competes with the background and lacks dominance."
+    },
+    {
+      "key": "use_case_context",
+      "level": "isolated",
+      "confidence": 0.0,
+      "rationale": "The product is shown without any context or realistic use scenario."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "absent",
+      "confidence": 0.0,
+      "rationale": "No specific buyer benefit is communicated in the image."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "cluttered",
+      "confidence": 0.0,
+      "rationale": "The image lacks a clear arrangement, making it visually confusing."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "flat",
+      "confidence": 0.0,
+      "rationale": "The image does not showcase material quality or details effectively."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "none",
+      "confidence": 0.0,
+      "rationale": "There are no visible trust signals present in the image."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "low",
+      "confidence": 0.0,
+      "rationale": "The image has low contrast and lacks clear boundaries."
+    },
+    {
+      "key": "marketplace_listing_signal",
+      "level": "generic_listing",
+      "confidence": 0.0,
+      "rationale": "The image resembles a generic product listing without campaign elements."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with the background and lacks dominance.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is shown without any context or realistic use scenario.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"absent\",\n      \"confidence\": 0.0,\n      \"rationale\": \"No specific buyer benefit is communicated in the image.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"cluttered\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image lacks a clear arrangement, making it visually confusing.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"flat\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image does not showcase material quality or details effectively.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"none\",\n      \"confidence\": 0.0,\n      \"rationale\": \"There are no visible trust signals present in the image.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"low\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image has low contrast and lacks clear boundaries.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"generic_listing\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image resembles a generic product listing without campaign elements.\"\n    }\n  ]\n}"
+  }
+}
