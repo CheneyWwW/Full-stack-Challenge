@@ -1,0 +1,51 @@
+{
+  "image_id": "strong_case_020",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.0,
+      "rationale": "The product is visible but competes with other elements in the image."
+    },
+    {
+      "key": "use_case_context",
+      "level": "isolated",
+      "confidence": 0.0,
+      "rationale": "The product is shown without a clear use case or context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "absent",
+      "confidence": 0.0,
+      "rationale": "No specific buyer benefit is communicated in the image."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The layout is organized, making it easy to follow."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "adequate",
+      "confidence": 0.0,
+      "rationale": "The product is clear, but material quality is not emphasized."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "none",
+      "confidence": 0.0,
+      "rationale": "There are no visible trust signals in the image."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "The image has strong contrast and is readable."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with other elements in the image.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is shown without a clear use case or context.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"absent\",\n      \"confidence\": 0.0,\n      \"rationale\": \"No specific buyer benefit is communicated in the image.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout is organized, making it easy to follow.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"none\",\n      \"confidence\": 0.0,\n      \"rationale\": \"There are no visible trust signals in the image.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image has strong contrast and is readable.\"\n    }\n  ]\n}"
+  }
+}

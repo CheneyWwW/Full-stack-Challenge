@@ -1,0 +1,51 @@
+{
+  "image_id": "strong_case_005",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "hero",
+      "confidence": 0.0,
+      "rationale": "The product is the dominant focal point and easily identifiable."
+    },
+    {
+      "key": "use_case_context",
+      "level": "isolated",
+      "confidence": 0.0,
+      "rationale": "The product is presented without a clear use context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.0,
+      "rationale": "The benefit of protection is clearly communicated."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The layout is organized with clear text and product visibility."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "adequate",
+      "confidence": 0.0,
+      "rationale": "The product is clear, but material quality is not emphasized."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The brand is recognizable and trustworthy."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "The text and product have strong contrast and are legible."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the dominant focal point and easily identifiable.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is presented without a clear use context.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"specific\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The benefit of protection is clearly communicated.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout is organized with clear text and product visibility.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The brand is recognizable and trustworthy.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The text and product have strong contrast and are legible.\"\n    }\n  ]\n}"
+  }
+}

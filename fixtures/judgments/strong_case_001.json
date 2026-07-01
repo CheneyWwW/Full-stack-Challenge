@@ -1,0 +1,51 @@
+{
+  "image_id": "strong_case_001",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "present",
+      "confidence": 0.0,
+      "rationale": "The product is visible but competes with other elements in the image."
+    },
+    {
+      "key": "use_case_context",
+      "level": "isolated",
+      "confidence": 0.0,
+      "rationale": "The product is shown without a clear use case or context."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "absent",
+      "confidence": 0.0,
+      "rationale": "No specific buyer benefit is communicated in the image."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "busy",
+      "confidence": 0.0,
+      "rationale": "The layout has competing elements that distract from the main subject."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "adequate",
+      "confidence": 0.0,
+      "rationale": "The product is clear, but material quality is not emphasized."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "subtle",
+      "confidence": 0.0,
+      "rationale": "There is a weak trust cue present but not central to the image."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "medium",
+      "confidence": 0.0,
+      "rationale": "The image is mostly readable, but some elements lack clarity."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with other elements in the image.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is shown without a clear use case or context.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"absent\",\n      \"confidence\": 0.0,\n      \"rationale\": \"No specific buyer benefit is communicated in the image.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"busy\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout has competing elements that distract from the main subject.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"subtle\",\n      \"confidence\": 0.0,\n      \"rationale\": \"There is a weak trust cue present but not central to the image.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"medium\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image is mostly readable, but some elements lack clarity.\"\n    }\n  ]\n}"
+  }
+}

@@ -9,6 +9,7 @@ description = "Spec-as-data ad image scorer for the Heedo DE-TH-03 take-home."
 requires-python = ">=3.10"
 dependencies = [
     "openai>=1.55.0",
+    "Pillow>=12.0.0",
     "pydantic>=2.7.0",
     "python-dotenv>=1.0.1",
     "PyYAML>=6.0.1",
@@ -21,4 +22,3 @@ dev = [
 
 [tool.setuptools.packages.find]
 include = ["adint*"]
-

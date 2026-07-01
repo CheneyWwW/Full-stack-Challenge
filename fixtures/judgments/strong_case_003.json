@@ -1,0 +1,51 @@
+{
+  "image_id": "strong_case_003",
+  "model": "openai/gpt-4o-mini",
+  "factors": [
+    {
+      "key": "product_prominence",
+      "level": "hero",
+      "confidence": 0.0,
+      "rationale": "The product is the dominant focal point and easily identifiable."
+    },
+    {
+      "key": "use_case_context",
+      "level": "in_use",
+      "confidence": 0.0,
+      "rationale": "The accessory is shown being held, indicating a clear use case."
+    },
+    {
+      "key": "benefit_clarity",
+      "level": "specific",
+      "confidence": 0.0,
+      "rationale": "The text suggests a specific benefit related to style and customization."
+    },
+    {
+      "key": "visual_hierarchy",
+      "level": "clean",
+      "confidence": 0.0,
+      "rationale": "The layout is straightforward, with clear text and product focus."
+    },
+    {
+      "key": "material_and_detail",
+      "level": "tactile",
+      "confidence": 0.0,
+      "rationale": "The image shows texture and details of the product clearly."
+    },
+    {
+      "key": "brand_trust_signal",
+      "level": "credible",
+      "confidence": 0.0,
+      "rationale": "The brand name is visible, providing a credible trust signal."
+    },
+    {
+      "key": "contrast_and_legibility",
+      "level": "high",
+      "confidence": 0.0,
+      "rationale": "The text and product have strong contrast, ensuring readability."
+    }
+  ],
+  "raw_response": {
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the dominant focal point and easily identifiable.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"in_use\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The accessory is shown being held, indicating a clear use case.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"specific\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The text suggests a specific benefit related to style and customization.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout is straightforward, with clear text and product focus.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"tactile\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image shows texture and details of the product clearly.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The brand name is visible, providing a credible trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The text and product have strong contrast, ensuring readability.\"\n    }\n  ]\n}"
+  }
+}

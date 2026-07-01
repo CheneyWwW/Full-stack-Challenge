@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import base64
+from io import BytesIO
 import json
-import mimetypes
 import os
 from pathlib import Path
 
 from openai import OpenAI
+from PIL import Image, ImageOps
 
 from adint.models import ImageJudgment, ScoreSpec
 from adint.spec import factor_prompt
@@ -66,7 +67,21 @@ class OpenAIVisionJudge(Judge):
 
 
 def _data_url(image_path: Path) -> str:
-    mime_type = mimetypes.guess_type(image_path.name)[0] or "image/jpeg"
-    encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
-    return f"data:{mime_type};base64,{encoded}"
+    with Image.open(image_path) as image:
+        image = ImageOps.exif_transpose(image)
+        image.thumbnail((1600, 1600))
 
+        if image.mode in {"RGBA", "LA"} or (
+            image.mode == "P" and "transparency" in image.info
+        ):
+            background = Image.new("RGB", image.size, (255, 255, 255))
+            background.paste(image.convert("RGBA"), mask=image.convert("RGBA").getchannel("A"))
+            image = background
+        elif image.mode != "RGB":
+            image = image.convert("RGB")
+
+        buffer = BytesIO()
+        image.save(buffer, format="JPEG", quality=90, optimize=True)
+
+    encoded = base64.b64encode(buffer.getvalue()).decode("ascii")
+    return f"data:image/jpeg;base64,{encoded}"
