@@ -1,0 +1,9 @@
+version,split,threshold,actual_label,predicted_weak,predicted_strong,total
+v0,train,69,weak,11,4,15
+v0,train,69,strong,6,9,15
+v0,holdout,69,weak,4,1,5
+v0,holdout,69,strong,1,4,5
+v1,train,54,weak,12,3,15
+v1,train,54,strong,3,12,15
+v1,holdout,54,weak,2,3,5
+v1,holdout,54,strong,0,5,5
