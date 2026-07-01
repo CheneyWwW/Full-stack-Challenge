@@ -98,58 +98,79 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
   - `scripts/tune_factor_weights.py` 使用类似 focal loss 的目标函数，默认给 `weak` 样本更高权重，用来重点观察 false positive weak cases。
   - 该脚本只输出建议权重变化，不自动改 YAML；原因是当前样本量小，直接优化 points 容易过拟合。
   - 第一轮诊断显示：仅靠调整现有 7 个 factor 的 points 不能稳定解决 weak 高分问题，更合理的下一步是新增或强化 `marketplace/listing` 风格惩罚 factor。
-- 第五阶段 v1 首轮修复记录：
+- 第五阶段 v1 修复记录：
   - 新增 `data/factors/phone_accessories_v1.yaml`
   - 在 v0 的 7 个 factor 基础上增加 `marketplace_listing_signal`
   - v1 judgments 单独保存到 `fixtures/judgments_v1/`，避免覆盖 v0 baseline
   - CLI 新增 `--fixture-dir`，可以分别评估 v0 和 v1
-  - v1 全量 40 张结果：
+  - v1 首轮全量 40 张结果：
     - `strong_mean`: 77.75
     - `weak_mean`: 60.15
     - `mean_gap`: 17.6
     - `pairwise_separation`: 0.700
     - `threshold_50_accuracy`: 0.650
-  - 相比 v0 的变化：
+  - v1 首轮相比 v0 的变化：
     - `weak_mean`: 63.0 -> 60.15，下降 2.85
     - `mean_gap`: 11.4 -> 17.6，提升 6.2
     - `threshold_50_accuracy`: 0.525 -> 0.650，提升 0.125
     - `pairwise_separation`: 0.665 -> 0.700，略有提升
-  - v1 有效的部分：
-    - 12/20 weak 被 `marketplace_listing_signal` 判为 `generic_listing`
-    - 17/20 strong 被判为 `campaign_like`
-    - 整体上说明新增 factor 方向有效，能扩大 strong / weak 的平均分差
-  - v1 首轮错误分析：
+  - v1 首轮问题：
+    - `weak_case_012`: v0 100 -> v1 100，`marketplace_listing_signal=campaign_like`
+    - `weak_case_013`: v0 100 -> v1 100，`marketplace_listing_signal=campaign_like`
+    - `weak_case_002`: v0 89 -> v1 96，`marketplace_listing_signal=campaign_like`
+    - `weak_case_016`: v0 78 -> v1 100，`marketplace_listing_signal=campaign_like`
+    - 证据显示首轮 `campaign_like` 定义太宽，把 hand-held / lifestyle-looking product shot / clean product presentation 误当成 campaign intent
+  - 收紧动作：
+    - 收紧 `marketplace_listing_signal` 的 `campaign_like` 定义：必须有明确 ad copy / benefit claim / brand-owned campaign context / launch-editorial presentation / benefit-linked lifestyle story
+    - 明确排除：单纯手持、MagSafe ring、Apple/device logo、clean background、professionally photographed product shot
+    - 扩大 `generic_listing` 定义：包含 generic hero image、compatibility/feature demo、product-page lifestyle shot with little narrative
+  - 重连 API 后，已用收紧后的 spec 重新生成 40 张 v1 judgments 并完成校准。
+  - v1 收紧版全量 40 张结果：
+    - `strong_mean`: 77.1
+    - `weak_mean`: 54.0
+    - `mean_gap`: 23.1
+    - `pairwise_separation`: 0.780
+    - `threshold_50_accuracy`: 0.650
+  - v1 收紧版相比 v0 的变化：
+    - `weak_mean`: 63.0 -> 54.0，下降 9.0
+    - `mean_gap`: 11.4 -> 23.1，提升 11.7
+    - `threshold_50_accuracy`: 0.525 -> 0.650，提升 0.125
+    - `pairwise_separation`: 0.665 -> 0.780，提升 0.115
+  - v1 收紧版相比 v1 首轮的变化：
+    - `weak_mean`: 60.15 -> 54.0，继续下降 6.15
+    - `mean_gap`: 17.6 -> 23.1，继续提升 5.5
+    - `pairwise_separation`: 0.700 -> 0.780，继续提升 0.080
+    - `threshold_50_accuracy`: 0.650 -> 0.650，保持不变
+  - v1 收紧版有效的部分：
+    - 17/20 weak 被 `marketplace_listing_signal` 判为 `generic_listing`，3/20 weak 判为 `ambiguous`
+    - 14/20 strong 被判为 `campaign_like`，3/20 strong 判为 `ambiguous`，3/20 strong 判为 `generic_listing`
+    - `weak_case_002` 从 v0 89 降到 v1 49，说明收紧后的 listing factor 能修复部分 high-scoring weak listing
+    - 整体上说明新增 factor 方向有效，明显扩大 strong / weak 的平均分差
+  - v1 收紧后错误分析：
     - 证据来源：`outputs/predictions_v1.csv` 提供 v1 score / raw_points，`fixtures/judgments_v1/*.json` 提供新增 factor 的 level 和 rationale。以下结论都来自这两个文件，不是主观看图猜测。
-    - 主要失败模式：整体指标改善，但最重要的 weak false positives 没有被修掉，说明新增 factor 方向有效但边界不够严格。
+    - 主要失败模式：整体指标改善，但仍有部分 polished weak 图片得分过高。收紧后的 `marketplace_listing_signal` 已不再把这些样本判成 `campaign_like`，但其他正向 factors 仍会把它们推高。
     - 证据表：
 
       | Case | Label | v0 score | v1 score | v1 raw | `marketplace_listing_signal` | VLM rationale evidence |
       | --- | --- | ---: | ---: | ---: | --- | --- |
-      | `weak_case_012` | weak | 100 | 100 | 46 | `campaign_like` | “clear campaign intent with a lifestyle presentation” |
-      | `weak_case_013` | weak | 100 | 100 | 46 | `campaign_like` | “branded scene and clear product presentation” |
-      | `weak_case_002` | weak | 89 | 96 | 42 | `campaign_like` | “campaign intent with a clear presentation” |
-      | `weak_case_016` | weak | 78 | 100 | 46 | `campaign_like` | “clear campaign intent with a lifestyle presentation” |
-      | `strong_case_011` | strong | 34 | 29 | -18 | `generic_listing` | “resembles a generic product listing rather than a campaign” |
+      | `weak_case_012` | weak | 100 | 96 | 42 | `ambiguous` | “polished but lacks clear ad copy or narrative context” |
+      | `weak_case_013` | weak | 100 | 96 | 42 | `ambiguous` | “polished but lacks explicit ad copy or narrative” |
+      | `weak_case_002` | weak | 89 | 49 | 0 | `generic_listing` | “marketplace listing, catalog shot, or sales-page asset” |
+      | `weak_case_016` | weak | 78 | 96 | 42 | `ambiguous` | “polished but lacks clear campaign context” |
+      | `strong_case_011` | strong | 34 | 29 | -18 | `generic_listing` | “product display without campaign context” |
 
     - 从证据表推导出的结论：
-      - `weak_case_012` / `weak_case_013` / `weak_case_016` 都是人工 `weak`，但 v1 仍为 100，且新增 factor 都给了 `campaign_like`，说明 VLM 把 lifestyle-looking / hand-held product shot 当成 campaign。
-      - `weak_case_002` 从 89 升到 96，且新增 factor rationale 只说 “clear presentation”，说明原定义没有把普通商品展示和真正广告创意区分开。
+      - `weak_case_002` 被成功修复：v1 将它判为 `generic_listing`，score 从 89 降到 49。
+      - `weak_case_012` / `weak_case_013` / `weak_case_016` 不再被判为 `campaign_like`，但仍得 96，说明这些样本的高分主要来自 `hero`、`in_use`、`specific`、`clean`、`tactile`、`high` 等其他正向 factors；下一轮需要降低 polished product shot 在这些 factor 上的叠加收益，或新增 interaction penalty。
       - `strong_case_011` 从 34 降到 29，且新增 factor 给了 `generic_listing`，说明它是一个边界 false negative：人工标成 strong，但单图视觉上更像 product display。
-  - 修复动作：
-    - 已收紧 `marketplace_listing_signal` 的 `campaign_like` 定义：必须有明确 ad copy / benefit claim / brand-owned campaign context / launch-editorial presentation / benefit-linked lifestyle story。
-    - 已明确排除：单纯手持、MagSafe ring、Apple/device logo、clean background、professionally photographed product shot。
-    - 已扩大 `generic_listing` 定义：包含 generic hero image、compatibility/feature demo、product-page lifestyle shot with little narrative。
-    - 下一步必须用 `--overwrite` 重新生成 `fixtures/judgments_v1/`，否则仍然会使用旧 prompt 产生的 judgment。
   - 缓存与限流说明：
     - 当前 v0 的 40 张 judgments 已完整缓存于 `fixtures/judgments/`。
-    - v1 首轮的 40 张 judgments 已完整缓存于 `fixtures/judgments_v1/`，并用于上述 v1 指标和错误分析。
-    - 在收紧 `marketplace_listing_signal` 后，我尝试用 `--overwrite` 重新生成 v1 judgments，但 GitHub Models 返回 rate limit，因此本次提交保留 v1 首轮缓存结果、错误分析、已收紧的 v1 spec，以及可续跑的脚本能力。
-    - `scripts/generate_judgment_fixtures.py` 已支持 `--start-at`、`--max-retries` 和 `--retry-sleep`；当 API quota 恢复后，可以从失败样本继续覆盖生成，而不需要从头开始。
-    - 因此当前提交的评分结果是可复现的 fixture-based baseline；收紧后的 v1 spec 是下一轮 calibration step，不把未完成重跑伪装成已经完成的提升。
+    - 收紧后的 v1 40 张 judgments 已完整缓存于 `fixtures/judgments_v1/`，并用于上述 v1 指标和错误分析。
+    - 生成过程中曾遇到 GitHub Models rate limit，脚本因此增加了 `--start-at`、`--max-retries` 和 `--retry-sleep`，后续可以从失败样本继续覆盖生成。
+    - 当前评分结果是可复现的 fixture-based baseline，不需要评审者拥有 API key 才能复跑 scoring / calibration。
 
 还未完成：
 
-- regenerate v1 judgments after tightened marketplace/listing definition
 - drift test
 - final report 和 error analysis
 

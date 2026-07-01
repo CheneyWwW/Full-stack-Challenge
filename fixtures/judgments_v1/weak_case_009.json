@@ -36,22 +36,22 @@
       "key": "brand_trust_signal",
       "level": "credible",
       "confidence": 0.0,
-      "rationale": "Brand signal appears credible and relevant."
+      "rationale": "Brand name is visible and provides a credible trust signal."
     },
     {
       "key": "contrast_and_legibility",
       "level": "high",
       "confidence": 0.0,
-      "rationale": "Strong contrast, sharp subject boundaries, and legible text if text is present."
+      "rationale": "Strong contrast and sharp subject boundaries make the image readable."
     },
     {
       "key": "marketplace_listing_signal",
       "level": "generic_listing",
       "confidence": 0.0,
-      "rationale": "The image looks like a generic marketplace listing or catalog shot."
+      "rationale": "The image primarily reads as a marketplace listing or catalog shot."
     }
   ],
   "raw_response": {
-    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the single dominant focal point and fills enough of the frame to identify instantly.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is isolated with no useful context or only a generic marketplace presentation.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"absent\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image does not make a benefit legible.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The eye path is obvious, text is readable if present, and supporting elements do not distract.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear enough, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Brand signal appears credible and relevant.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Strong contrast, sharp subject boundaries, and legible text if text is present.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"generic_listing\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image looks like a generic marketplace listing or catalog shot.\"\n    }\n  ]\n}"
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"hero\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is the single dominant focal point and fills enough of the frame to identify instantly.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"isolated\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is isolated with no useful context or only a generic marketplace presentation.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"absent\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image does not make a benefit legible.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"clean\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The eye path is obvious, text is readable if present, and supporting elements do not distract.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear enough, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"credible\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Brand name is visible and provides a credible trust signal.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"high\",\n      \"confidence\": 0.0,\n      \"rationale\": \"Strong contrast and sharp subject boundaries make the image readable.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"generic_listing\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image primarily reads as a marketplace listing or catalog shot.\"\n    }\n  ]\n}"
   }
 }

@@ -36,7 +36,7 @@
       "key": "brand_trust_signal",
       "level": "subtle",
       "confidence": 0.0,
-      "rationale": "There are some brand cues, but they are not central to the image."
+      "rationale": "There is a weak trust cue present but it is not central to the image."
     },
     {
       "key": "contrast_and_legibility",
@@ -46,12 +46,12 @@
     },
     {
       "key": "marketplace_listing_signal",
-      "level": "ambiguous",
+      "level": "generic_listing",
       "confidence": 0.0,
-      "rationale": "The image is product-forward but does not clearly convey campaign intent."
+      "rationale": "The image primarily reads as a product display without a clear campaign idea."
     }
   ],
   "raw_response": {
-    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with other elements in the image.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"contextual\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The setting hints at a lifestyle but does not clearly show the accessory in use.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"generic\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image suggests a positive vibe but does not communicate a specific benefit.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"busy\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout has competing elements that make it somewhat hard to read.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"subtle\",\n      \"confidence\": 0.0,\n      \"rationale\": \"There are some brand cues, but they are not central to the image.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"medium\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image is mostly readable, but some elements lack strong contrast.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"ambiguous\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image is product-forward but does not clearly convey campaign intent.\"\n    }\n  ]\n}"
+    "content": "{\n  \"factors\": [\n    {\n      \"key\": \"product_prominence\",\n      \"level\": \"present\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is visible but competes with other elements in the image.\"\n    },\n    {\n      \"key\": \"use_case_context\",\n      \"level\": \"contextual\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The setting hints at a lifestyle but does not clearly show the accessory in use.\"\n    },\n    {\n      \"key\": \"benefit_clarity\",\n      \"level\": \"generic\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image suggests a positive vibe but does not communicate a specific benefit.\"\n    },\n    {\n      \"key\": \"visual_hierarchy\",\n      \"level\": \"busy\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The layout has competing elements that make it somewhat hard to read.\"\n    },\n    {\n      \"key\": \"material_and_detail\",\n      \"level\": \"adequate\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The product is clear, but material quality is not emphasized.\"\n    },\n    {\n      \"key\": \"brand_trust_signal\",\n      \"level\": \"subtle\",\n      \"confidence\": 0.0,\n      \"rationale\": \"There is a weak trust cue present but it is not central to the image.\"\n    },\n    {\n      \"key\": \"contrast_and_legibility\",\n      \"level\": \"medium\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image is mostly readable, but some elements lack strong contrast.\"\n    },\n    {\n      \"key\": \"marketplace_listing_signal\",\n      \"level\": \"generic_listing\",\n      \"confidence\": 0.0,\n      \"rationale\": \"The image primarily reads as a product display without a clear campaign idea.\"\n    }\n  ]\n}"
   }
 }
