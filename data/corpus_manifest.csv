@@ -1,4 +1,41 @@
 image_id,split,label,category,source_url,brand,local_path,fixture_id,notes
-strong_phone_case_001,holdout,strong,phone_accessories,fixture://sample,strong-brand,,strong_phone_case_001,Fixture only. Replace with a real public ad image.
-weak_marketplace_case_001,holdout,weak,phone_accessories,fixture://sample,marketplace,,weak_marketplace_case_001,Fixture only. Replace with a real public listing image.
-
+strong_case_001,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_001.jpg,strong_case_001,Meta ad screenshot with visible phone case product and promotional free delivery message
+strong_case_002,train,strong,phone_cases,https://kapaver.com/,KAPAVER,data/images/strong_case_002.jpg,strong_case_002,Sale creative with multiple case products visible and clear discount message
+strong_case_003,train,strong,phone_cases,https://www.casetify.com/,CASETiFY,data/images/strong_case_003.jpg,strong_case_003,Product in hand creative with charm-ready message and clear case accessory focus
+strong_case_004,train,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_004.jpg,strong_case_004,Outdoor durability creative with phone case shown in rugged use context
+strong_case_005,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_005.jpg,strong_case_005,Meta ad screenshot with product hero and clear protection-focused copy
+strong_case_006,train,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_006.jpg,strong_case_006,Lifestyle creative with phone case in hand and new phone new case message
+strong_case_007,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_007.jpg,strong_case_007,Meta ad screenshot with product lineup and event-themed visual context
+strong_case_008,train,strong,phone_cases,https://www.casetify.com/,CASETiFY,data/images/strong_case_008.jpg,strong_case_008,Award-focused product creative with case and MagSafe accessory clearly visible
+strong_case_009,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_009.jpg,strong_case_009,Meta ad screenshot with bold product color and new product launch copy
+strong_case_010,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_010.jpg,strong_case_010,Meta ad screenshot with case color launch message and lifestyle styling
+strong_case_011,train,strong,phone_cases,https://item.jd.com/,JD,data/images/strong_case_011.jpg,strong_case_011,JD product creative with mirror phone case feature and clean product presentation
+strong_case_012,train,strong,phone_cases,https://www.facebook.com/ads/library/,Meta Ad Library,data/images/strong_case_012.jpg,strong_case_012,Meta ad screenshot with certification-style trust signal and product close-up
+strong_case_013,train,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_013.jpg,strong_case_013,Hero banner with outdoor use context and iconic durability message
+strong_case_014,train,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_014.jpg,strong_case_014,Adventure-themed creative with multiple cases and clear readiness message
+strong_case_015,train,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_015.jpg,strong_case_015,Brand-forward creative with phone case product and made for yes campaign copy
+strong_case_016,holdout,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_016.jpg,strong_case_016,Outdoor product hero with protection claim and phone case shown in rough terrain
+strong_case_017,holdout,strong,phone_cases,https://www.otterbox.com/,OtterBox,data/images/strong_case_017.jpg,strong_case_017,Sustainability-focused creative with phone case product and recycled plastic claim
+strong_case_018,holdout,strong,phone_cases,https://www.casetify.com/,CASETiFY,data/images/strong_case_018.jpg,strong_case_018,Lifestyle banner with phone case product and bright branded campaign composition
+strong_case_019,holdout,strong,phone_cases,https://www.casetify.com/,CASETiFY,data/images/strong_case_019.jpg,strong_case_019,Product-in-hand creative with high-end positioning and clear case detail
+strong_case_020,holdout,strong,phone_cases,https://www.ipitaka.com/,PITAKA,data/images/strong_case_020.jpg,strong_case_020,Homepage hero ad with multiple phone cases visible and premium visual hierarchy
+weak_case_001,train,weak,phone_cases,https://detail.tmall.com/item.htm?id=1056740055284,Taobao/Tmall,data/images/weak_case_001.jpg,weak_case_001,Marketplace product image with decorative case but limited ad context
+weak_case_002,train,weak,phone_cases,https://item.taobao.com/item.htm?id=643981326768,Taobao,data/images/weak_case_002.jpg,weak_case_002,Marketplace listing image with isolated case design and minimal use context
+weak_case_003,train,weak,phone_cases,https://detail.tmall.com/item.htm?id=1036725693350,Taobao/Tmall,data/images/weak_case_003.jpg,weak_case_003,Marketplace collage with multiple case angles and busy product presentation
+weak_case_004,train,weak,phone_cases,https://item.taobao.com/item.htm?id=718228168915,Taobao,data/images/weak_case_004.jpg,weak_case_004,Marketplace product scene with weak hierarchy and limited benefit clarity
+weak_case_005,train,weak,phone_cases,https://detail.tmall.com/item.htm?id=1000708238015,Taobao/Tmall,data/images/weak_case_005.jpg,weak_case_005,Isolated product render with little context beyond basic appearance
+weak_case_006,train,weak,phone_cases,https://www.amazon.com/dp/B0D9VS4PV7,Amazon,data/images/weak_case_006.jpg,weak_case_006,Amazon listing-style render with product visible but generic commercial presentation
+weak_case_007,train,weak,phone_cases,https://www.amazon.com/dp/B0CGCMS31N,Amazon,data/images/weak_case_007.jpg,weak_case_007,Amazon listing image with isolated case and no meaningful lifestyle context
+weak_case_008,train,weak,phone_cases,https://www.amazon.com/dp/B0DFH8SNK5,Amazon,data/images/weak_case_008.jpg,weak_case_008,Amazon listing-style case render with simple color focus and weak ad storytelling
+weak_case_009,train,weak,phone_cases,https://www.amazon.com/dp/B0CGCKL11P,Amazon,data/images/weak_case_009.jpg,weak_case_009,Amazon listing image with isolated product and minimal benefit communication
+weak_case_010,train,weak,phone_cases,https://www.amazon.com/dp/B0CFVDX4HT,Amazon,data/images/weak_case_010.jpg,weak_case_010,Amazon product graphic with protection claim but generic listing-style layout
+weak_case_011,train,weak,phone_cases,https://www.ebay.com/itm/157294968550,eBay,data/images/weak_case_011.jpg,weak_case_011,eBay listing image with color lineup and no clear campaign context
+weak_case_012,train,weak,phone_cases,https://www.ebay.com/itm/157414201723,eBay,data/images/weak_case_012.jpg,weak_case_012,eBay product photo with handheld case but weak benefit message
+weak_case_013,train,weak,phone_cases,https://www.ebay.com/itm/287230436882,eBay,data/images/weak_case_013.jpg,weak_case_013,eBay product photo with case visible but listing-like composition
+weak_case_014,train,weak,phone_cases,https://www.ebay.com/itm/315253795867,eBay,data/images/weak_case_014.jpg,weak_case_014,eBay listing image showing packaging and product with limited ad appeal
+weak_case_015,train,weak,phone_cases,https://www.ebay.com/itm/357795766228,eBay,data/images/weak_case_015.jpg,weak_case_015,eBay listing image with isolated product and weak visual storytelling
+weak_case_016,holdout,weak,phone_cases,https://item.jd.com/10209643490116.html,JD,data/images/weak_case_016.jpg,weak_case_016,JD listing photo with product in hand but limited campaign structure
+weak_case_017,holdout,weak,phone_cases,https://item.jd.com/10166807915693.html,JD,data/images/weak_case_017.jpg,weak_case_017,JD product render with clean product visibility but low use context
+weak_case_018,holdout,weak,phone_cases,https://item.jd.com/10209483924982.html,JD,data/images/weak_case_018.jpg,weak_case_018,JD listing creative with product shown but weak ad hierarchy and generic layout
+weak_case_019,holdout,weak,phone_cases,https://item.jd.com/10207939597386.html,JD,data/images/weak_case_019.jpg,weak_case_019,JD listing image with simple product hero and limited benefit evidence
+weak_case_020,holdout,weak,phone_cases,https://detail.1688.com/offer/925129397834.html,1688,data/images/weak_case_020.jpg,weak_case_020,1688 marketplace image with decorative case and weak advertising context

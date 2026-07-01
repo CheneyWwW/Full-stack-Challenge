@@ -30,7 +30,7 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
 
 ## 本次提交完成了什么
 
-当前提交完成的是可运行 scaffold：
+第一阶段完成的是可运行 scaffold：
 
 - CLI：`score`、`batch`、`calibrate`、`validate-spec`
 - YAML factor table：`data/factors/phone_accessories_v0.yaml`
@@ -44,9 +44,22 @@ py -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e '.[dev]'
 - Test：验证 strong fixture 分数高于 weak fixture
 - Report template 和 24 小时 workplan
 
+第二阶段完成的是初始真实 corpus：
+
+- 收集并保存 40 张 phone case 图片到 `data/images/`
+- 数据分布：20 张 `strong`，20 张 `weak`
+- 数据切分：30 张 `train`，10 张 `holdout`
+- 完成 `data/corpus_manifest.csv`：
+  - 每张图包含 `source_url`、`brand`、`local_path`、`split`、`label`
+- 完成 `data/labels/labels.csv`：
+  - 每张图包含人工 label 和简短 rationale
+- 当前数据集已经通过完整性检查：
+  - 无 TODO
+  - 无缺失图片
+  - manifest 和 labels 一一对应
+
 还未完成：
 
-- 真实 40-80 张图片 corpus
 - corpus-backed factor evidence
 - train / holdout calibration
 - drift test
@@ -108,3 +121,20 @@ AI_API_KEY=your_token_here
 - `reports/REPORT_TEMPLATE.md`：最终报告模板
 - `scripts/WORKPLAN.md`：24 小时计划
 - `tests/`：评分逻辑测试
+
+## 当前数据来源
+
+当前 corpus 来自公开页面和公开广告/商品来源，包括：
+
+- CASETiFY 官网
+- OtterBox 官网
+- PITAKA 官网
+- KAPAVER 官网
+- Meta Ad Library
+- Amazon
+- Taobao / Tmall
+- JD
+- eBay
+- 1688
+
+部分 Meta Ad Library 样本没有保留具体广告 URL，因此 manifest 中使用官方广告库首页并在 notes 中说明 provenance 限制。

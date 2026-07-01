@@ -1,4 +1,41 @@
 image_id,label,labeler,rationale,created_at
-strong_phone_case_001,strong,self,Fixture: clean hero product with clear benefit and context,2026-06-30
-weak_marketplace_case_001,weak,self,Fixture: cluttered marketplace-style image with weak hierarchy,2026-06-30
-
+strong_case_001,strong,self,Strong because the case is visible and the image uses promotional ad copy with a clear offer,2026-07-01
+strong_case_002,strong,self,Strong because it presents multiple products with a sale message and a clear shopping-oriented composition,2026-07-01
+strong_case_003,strong,self,Strong because the case is shown in hand with a clear accessory benefit and clean product focus,2026-07-01
+strong_case_004,strong,self,Strong because it links the case to rugged outdoor durability and keeps the product prominent,2026-07-01
+strong_case_005,strong,self,Strong because it uses a simple product hero and a direct protection benefit that is easy to read,2026-07-01
+strong_case_006,strong,self,Strong because it shows a realistic hand-held use moment with clear new phone new case messaging,2026-07-01
+strong_case_007,strong,self,Strong because it combines product lineup visibility with an event-style context that feels like a campaign creative,2026-07-01
+strong_case_008,strong,self,Strong because it communicates product quality through award copy and a clean case accessory layout,2026-07-01
+strong_case_009,strong,self,Strong because the product is dominant and the launch message is visually direct and easy to scan,2026-07-01
+strong_case_010,strong,self,Strong because it presents a color launch with lifestyle styling and clear phone case relevance,2026-07-01
+strong_case_011,strong,self,Strong because the phone case feature is clear and the product is presented with clean commercial intent,2026-07-01
+strong_case_012,strong,self,Strong because it combines product close-up with a trust signal and benefit-oriented campaign copy,2026-07-01
+strong_case_013,strong,self,Strong because the hero banner has clear product visibility outdoor context durability copy and CTA,2026-07-01
+strong_case_014,strong,self,Strong because it shows multiple cases in an adventure context with a clear readiness benefit,2026-07-01
+strong_case_015,strong,self,Strong because it uses bold brand color product visibility and a concise campaign message,2026-07-01
+strong_case_016,strong,self,Strong because the case is shown in rough terrain and the protection claim is immediately understandable,2026-07-01
+strong_case_017,strong,self,Strong because it gives the product a sustainability story while keeping the case visible and cleanly framed,2026-07-01
+strong_case_018,strong,self,Strong because it uses lifestyle context and branded campaign design to make the case feel like an ad creative,2026-07-01
+strong_case_019,strong,self,Strong because the product is held in hand and the composition communicates premium function and detail,2026-07-01
+strong_case_020,strong,self,Strong because the PITAKA hero creative shows multiple cases with readable product-line copy premium composition and clear CTA,2026-07-01
+weak_case_001,weak,self,Weak because it looks like a marketplace product image and lacks a clear use case or campaign message,2026-07-01
+weak_case_002,weak,self,Weak because the product is isolated and the image gives little reason to choose the case beyond appearance,2026-07-01
+weak_case_003,weak,self,Weak because the collage is busy and communicates product variants more than a focused ad benefit,2026-07-01
+weak_case_004,weak,self,Weak because the scene is decorative but the product benefit and visual hierarchy are not clearly ad-like,2026-07-01
+weak_case_005,weak,self,Weak because the image is mostly an isolated render with no use context and minimal selling story,2026-07-01
+weak_case_006,weak,self,Weak because it is a generic listing render with limited lifestyle context and weak emotional hook,2026-07-01
+weak_case_007,weak,self,Weak because it shows the case plainly but does not communicate a distinct buyer benefit,2026-07-01
+weak_case_008,weak,self,Weak because it relies on simple product color and lacks a strong ad concept or use case,2026-07-01
+weak_case_009,weak,self,Weak because it is a catalog-like product shot without clear context or benefit-led copy,2026-07-01
+weak_case_010,weak,self,Weak because the protection claim is present but the layout still feels like a generic marketplace graphic,2026-07-01
+weak_case_011,weak,self,Weak because the color lineup is clear but the image lacks focused storytelling or use context,2026-07-01
+weak_case_012,weak,self,Weak because the handheld product photo has low ad polish and only weakly communicates benefit,2026-07-01
+weak_case_013,weak,self,Weak because the case is visible but the image reads as a listing photo rather than a campaign creative,2026-07-01
+weak_case_014,weak,self,Weak because packaging and product are shown but the image lacks a clear feed-stopping benefit,2026-07-01
+weak_case_015,weak,self,Weak because the isolated product presentation has little context and weak conversion direction,2026-07-01
+weak_case_016,weak,self,Weak because it shows the case in hand but lacks clear headline benefit and polished hierarchy,2026-07-01
+weak_case_017,weak,self,Weak because the clean render shows the product but does not create a persuasive ad message,2026-07-01
+weak_case_018,weak,self,Weak because the image has some design treatment but the product story remains generic and listing-like,2026-07-01
+weak_case_019,weak,self,Weak because the product hero is simple and does not clearly express a differentiated buyer benefit,2026-07-01
+weak_case_020,weak,self,Weak because the decorative product photo lacks strong use context and reads like a marketplace listing,2026-07-01
