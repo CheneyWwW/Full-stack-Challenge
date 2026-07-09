@@ -1,4 +1,4 @@
-import { ConflictError } from "@/src/server/errors";
+import { BadRequestError } from "@/src/server/errors";
 import { ok, readJson, store, toErrorResponse } from "@/src/server/http";
 import { isStepKey, saveAssessmentStep } from "@/src/server/workflows";
 
@@ -10,7 +10,7 @@ export async function PATCH(
     const { sessionId, stepKey } = await context.params;
     const normalizedStepKey = stepKey.toUpperCase();
     if (!isStepKey(normalizedStepKey)) {
-      throw new ConflictError(`Unknown assessment step: ${stepKey}`);
+      throw new BadRequestError(`Unknown assessment step: ${stepKey}`);
     }
     return ok(await saveAssessmentStep(store, sessionId, normalizedStepKey, await readJson(request)));
   } catch (error) {

@@ -9,6 +9,8 @@ datasource db {
 
 enum AssessmentStatus {
   DRAFT
+  SUBMITTED
+  RESULT_READY
   COMPLETED
 }
 
@@ -77,8 +79,11 @@ model HealthResult {
   assessmentId    String   @unique
   bmi             Float
   bmiCategory     String
+  bmr             Float?
+  tdee            Float?
   dailyCalories   Int
   targetDate      DateTime
+  summary         String?
   weeksToTarget   Int
   predictionCurve Json
   createdAt       DateTime @default(now())

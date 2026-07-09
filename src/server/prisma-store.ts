@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { BmiCategory, HealthEvaluation, StepData, StepKey, SubscriptionStatus } from "@/src/domain/types";
-import { NotFoundError } from "./errors";
+import { BmiCategory, HealthEvaluation, STEP_ORDER, StepData, StepKey, SubscriptionStatus } from "@/src/domain/types";
+import { ConflictError, NotFoundError } from "./errors";
 import {
   AssessmentStore,
   PaymentActivationInput,
@@ -28,6 +28,11 @@ function toStoredStep(step: {
 
 function toSubscriptionStatus(status: string): SubscriptionStatus {
   return status as SubscriptionStatus;
+}
+
+function furthestStep(currentStep: StepKey | null, nextStep: StepKey): StepKey {
+  if (!currentStep) return nextStep;
+  return STEP_ORDER.indexOf(nextStep) > STEP_ORDER.indexOf(currentStep) ? nextStep : currentStep;
 }
 
 export class PrismaAssessmentStore implements AssessmentStore {
@@ -76,8 +81,11 @@ export class PrismaAssessmentStore implements AssessmentStore {
         ? {
             bmi: user.assessment.result.bmi,
             bmiCategory: user.assessment.result.bmiCategory as BmiCategory,
+            bmr: user.assessment.result.bmr ?? undefined,
+            tdee: user.assessment.result.tdee ?? undefined,
             dailyCalories: user.assessment.result.dailyCalories,
             targetDate: user.assessment.result.targetDate.toISOString().slice(0, 10),
+            summary: user.assessment.result.summary ?? undefined,
             weeksToTarget: user.assessment.result.weeksToTarget,
             predictionCurve: user.assessment.result.predictionCurve as never,
             createdAt: user.assessment.result.createdAt.toISOString()
@@ -93,6 +101,12 @@ export class PrismaAssessmentStore implements AssessmentStore {
         include: { assessment: true }
       });
       if (!user || !user.assessment) throw new NotFoundError("Session not found");
+      if (user.assessment.status !== "DRAFT") {
+        throw new ConflictError("Assessment can no longer be modified");
+      }
+      if (input.expectedVersion !== user.assessment.version) {
+        throw new ConflictError("Assessment version conflict");
+      }
 
       await tx.assessmentStep.upsert({
         where: {
@@ -118,7 +132,7 @@ export class PrismaAssessmentStore implements AssessmentStore {
       await tx.assessment.update({
         where: { id: user.assessment.id },
         data: {
-          currentStep: input.stepKey,
+          currentStep: furthestStep(user.assessment.currentStep, input.stepKey),
           version: { increment: 1 }
         }
       });
@@ -144,16 +158,22 @@ export class PrismaAssessmentStore implements AssessmentStore {
           assessmentId: user.assessment.id,
           bmi: result.bmi,
           bmiCategory: result.bmiCategory,
+          bmr: result.bmr ?? null,
+          tdee: result.tdee ?? null,
           dailyCalories: result.dailyCalories,
           targetDate: new Date(result.targetDate),
+          summary: result.summary ?? null,
           weeksToTarget: result.weeksToTarget,
           predictionCurve: result.predictionCurve as never
         },
         update: {
           bmi: result.bmi,
           bmiCategory: result.bmiCategory,
+          bmr: result.bmr ?? null,
+          tdee: result.tdee ?? null,
           dailyCalories: result.dailyCalories,
           targetDate: new Date(result.targetDate),
+          summary: result.summary ?? null,
           weeksToTarget: result.weeksToTarget,
           predictionCurve: result.predictionCurve as never
         }
@@ -162,7 +182,7 @@ export class PrismaAssessmentStore implements AssessmentStore {
       await tx.assessment.update({
         where: { id: user.assessment.id },
         data: {
-          status: "COMPLETED",
+          status: "RESULT_READY",
           completedAt: new Date(),
           version: { increment: 1 }
         }
@@ -179,6 +199,9 @@ export class PrismaAssessmentStore implements AssessmentStore {
       where: { providerEventId: input.providerEventId }
     });
     if (existing) {
+      if (existing.userId !== input.sessionId) {
+        throw new ConflictError("Payment event belongs to another session");
+      }
       await this.markActive(input.sessionId);
       return { subscriptionStatus: "ACTIVE", idempotent: true };
     }
@@ -223,14 +246,16 @@ export class PrismaAssessmentStore implements AssessmentStore {
   private async markActive(sessionId: string): Promise<void> {
     const user = await this.db.user.findUnique({ where: { id: sessionId } });
     if (!user) throw new NotFoundError("Session not found");
+    const now = new Date();
+    const currentPeriodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
     await this.db.user.update({
       where: { id: sessionId },
       data: { subscriptionStatus: "ACTIVE" }
     });
     await this.db.subscription.upsert({
       where: { userId: sessionId },
-      create: { userId: sessionId, status: "ACTIVE", activatedAt: new Date() },
-      update: { status: "ACTIVE", activatedAt: new Date() }
+      create: { userId: sessionId, status: "ACTIVE", activatedAt: now, currentPeriodEnd },
+      update: { status: "ACTIVE", activatedAt: now, currentPeriodEnd }
     });
   }
 }

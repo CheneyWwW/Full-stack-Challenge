@@ -5,6 +5,8 @@ import {
   SubscriptionStatus
 } from "@/src/domain/types";
 
+export type AssessmentStatus = "DRAFT" | "SUBMITTED" | "RESULT_READY" | "COMPLETED";
+
 export type StoredStep = {
   stepKey: StepKey;
   data: StepData;
@@ -20,7 +22,7 @@ export type StoredResult = HealthEvaluation & {
 export type SessionRecord = {
   sessionId: string;
   assessmentId: string;
-  assessmentStatus: "DRAFT" | "COMPLETED";
+  assessmentStatus: AssessmentStatus;
   currentStep: StepKey | null;
   version: number;
   subscriptionStatus: SubscriptionStatus;
@@ -32,6 +34,7 @@ export type SaveStepInput = {
   sessionId: string;
   stepKey: StepKey;
   position: number;
+  expectedVersion: number;
   data: StepData;
 };
 

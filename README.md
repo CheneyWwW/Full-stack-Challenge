@@ -129,11 +129,14 @@ PowerShell：
 
 ```powershell
 $body = @{
-  age = 35
-  heightCm = 165
-  weightKg = 73
-  targetWeightKg = 64
-} | ConvertTo-Json
+  version = $progress.version
+  data = @{
+    age = 35
+    heightCm = 165
+    weightKg = 73
+    targetWeightKg = 64
+  }
+} | ConvertTo-Json -Depth 4
 
 Invoke-RestMethod `
   -Method Patch `
@@ -147,8 +150,20 @@ curl.exe：
 ```powershell
 curl.exe -X PATCH "http://localhost:3000/api/v1/sessions/$sessionId/assessment-steps/body" `
   -H "Content-Type: application/json" `
-  --data-raw "{`"age`":35,`"heightCm`":165,`"weightKg`":73,`"targetWeightKg`":64}"
+  --data-raw "{`"version`":$($progress.version),`"data`":{`"age`":35,`"heightCm`":165,`"weightKg`":73,`"targetWeightKg`":64}}"
 ```
+
+`version` 必须等于当前 progress 返回的 `version`。如果旧页面或并发请求携带过期 version，接口返回 `409 CONFLICT`，避免覆盖新数据。
+
+#### Version 乐观锁
+
+分步保存使用 `Assessment.version` 做乐观锁：
+
+- 创建 session 时，`version` 初始值为 `0`。
+- 每次 `PATCH /assessment-steps/{stepKey}` 成功后，`version + 1`。
+- 前端每次 PATCH 都必须带上当前 progress 返回的 `version`。
+- 如果请求里的 `version` 不是当前最新值，接口返回 `409 CONFLICT`，不会覆盖已有数据。
+- assessment 提交为 `RESULT_READY` 后，不允许继续修改分步数据，继续 PATCH 会返回 `409 CONFLICT`。
 
 ### 进度恢复
 
@@ -170,33 +185,44 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/v1/sessions/$sessi
 
 - BMI
 - BMI 分类
+- BMR
+- TDEE
 - 建议每日摄入量
 - 目标预测日期
+- 结果摘要
 - 按周生成的体重预测曲线
+
+这些字段全部由服务端 `calculateHealthResult` 生成，前端不会提交也不能覆盖 `bmi`、`dailyCalories`、`targetDate` 等结果字段。
 
 ### 获取结果
 
 `GET /api/v1/sessions/{sessionId}/results`
 
-非会员只返回预览数据：
+非会员只返回 `LOCKED` 预览数据。服务端只暴露 `bmi`、`bmiCategory`、`summary` 和 paywall 文案，不返回完整计划字段：
 
 ```json
 {
-  "access": "preview",
+  "access": "LOCKED",
   "requiresPayment": true,
   "subscriptionStatus": "FREE",
   "result": {
     "bmi": 26.81,
-    "bmiCategory": "overweight"
+    "bmiCategory": "overweight",
+    "summary": "Your BMI is 26.81 (overweight). Upgrade to unlock your complete personalized plan."
   },
   "paywall": {
-    "message": "Upgrade to unlock your calorie target, goal date, and prediction curve.",
-    "unlocks": ["dailyCalories", "targetDate", "weeksToTarget", "predictionCurve"]
+    "message": "Upgrade to unlock your complete personalized plan.",
+    "unlocks": [
+      "personalized calorie target",
+      "target timeline",
+      "progress forecast",
+      "weekly action plan"
+    ]
   }
 }
 ```
 
-会员会返回完整结果，包含 `dailyCalories`、`targetDate`、`weeksToTarget`、`predictionCurve`。
+会员会返回 `FULL` 结果，包含 `bmr`、`tdee`、`dailyCalories`、`targetDate`、`summary`、`weeksToTarget`、`predictionCurve`。权限过滤发生在服务端，前端不能通过 query/body 伪造会员状态。
 
 ### 模拟支付回调
 
@@ -205,7 +231,7 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:3000/api/v1/sessions/$sessi
 ```powershell
 $payBody = @{
   sessionId = "demo_free_session"
-  providerEventId = "manual_demo_free_session"
+  idempotencyKey = "manual_demo_free_session"
 } | ConvertTo-Json
 
 Invoke-RestMethod `
@@ -225,7 +251,11 @@ Invoke-RestMethod `
   -Body $payBody
 ```
 
-回调会把用户的 `subscriptionStatus` 改为 `ACTIVE`，并写入 `PaymentEvent`。重复提交相同 `providerEventId` 是幂等的。
+`/pay` 和 `/api/v1/payments/mock-callback` 共用同一个 `activateSubscription` workflow，避免两套支付逻辑。
+
+支付接口要求 `sessionId` 和 `idempotencyKey`。只有 assessment 已提交并生成 `HealthResult` 后才允许支付，否则返回 `409 CONFLICT`。`amount` 和 `currency` 不是必填字段；如果请求体传入了这些字段，后端会校验非法值并返回 400。
+
+回调会把 `User.subscriptionStatus` 和 `Subscription.status` 改为 `ACTIVE`，写入 `activatedAt`、`currentPeriodEnd`，并创建 `PaymentEvent`。重复提交相同 `idempotencyKey` 是幂等的，不会重复创建事件。
 
 ## 数据模型
 
@@ -267,8 +297,11 @@ erDiagram
     string assessmentId FK
     float bmi
     string bmiCategory
+    float bmr
+    float tdee
     int dailyCalories
     datetime targetDate
+    string summary
     int weeksToTarget
     json predictionCurve
   }
@@ -294,8 +327,9 @@ erDiagram
 设计取舍：
 
 - `AssessmentStep.data` 使用 JSONB，便于后续新增问卷步骤，避免频繁修改大表结构。
-- `Assessment.version` 和 `AssessmentStep.version` 用于支持重复提交、恢复和并发更新的可观察性。
+- `Assessment.version` 和 `AssessmentStep.version` 用于支持重复提交、恢复和并发更新的可观察性；分步保存会检查 `Assessment.version`，旧版本请求返回 409。
 - `PaymentEvent.providerEventId` 唯一，保证支付回调幂等。
+- `HealthResult.bmr`、`tdee`、`summary` 是 nullable 新增字段，避免迁移破坏历史结果；新提交会写入完整值。
 - `HealthResult.predictionCurve` 是受保护字段，非会员接口不会返回。
 
 ## 测试覆盖
@@ -306,19 +340,59 @@ erDiagram
 npm test
 ```
 
+按测试层级运行：
+
+```bash
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+```
+
+运行真实 Prisma/PostgreSQL 持久化集成测试：
+
+```bash
+$env:TEST_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/health_assessment_test?schema=public"
+npm run db:push
+npm test -- tests/integration/assessment-submit-result.test.ts
+```
+
+运行订阅鉴权和 `/pay` 闭环测试：
+
+```bash
+npm test -- tests/integration/result-access-payment.test.ts
+```
+
+运行完整 API funnel E2E：
+
+```bash
+npm run test:e2e
+```
+
+如果没有设置 `TEST_DATABASE_URL` 或 `DATABASE_URL`，Prisma 数据库断言会被 Vitest 标记为 skipped，避免误连线上数据库；配置测试库后会使用 `PrismaAssessmentStore`、真实 `HealthResult`、`Subscription` 和 `PaymentEvent` 表验证持久化。
+
 当前覆盖范围：
 
-- 健康评估算法：BMI、BMI 分类、摄入量、目标日期、预测曲线。
-- 算法边界：缺失字段、非数字注入、身高/体重/年龄越界、目标体重过激、目标体重与减重目标矛盾。
-- 持久化流程：分步保存、中断后恢复、乱序提交、重复提交、并发更新。
-- 鉴权差异：非会员拿不到 `predictionCurve`、`dailyCalories`、`targetDate`。
-- 支付闭环：`/pay` 等价回调后状态变为 `ACTIVE`，结果从 preview 变 full。
-- 幂等性：重复支付事件不会破坏订阅状态。
+- 健康评估算法：BMI、BMI 分类、BMR、TDEE、摄入量、目标日期、结果摘要、预测曲线。
+- 算法边界：缺失字段、非数字注入、NaN/Infinity、身高/体重/年龄越界、非法 gender/goal/exerciseFrequency、目标体重过激、目标体重与目标类型矛盾。
+- 第二阶段 Core Logic：完整 assessment submit 后调用服务端算法，`HealthResult` 落库并通过 `assessmentId` 关联当前 assessment；重复 submit 不创建多条结果；submit 失败不创建 result 且 assessment 保持 `DRAFT`。
+- 第三阶段 Auth & Access：未付费结果返回 `LOCKED` 且只包含公开字段；全量 JSON 中不出现受保护字段 key；`/pay` 后数据库状态变 `ACTIVE`，结果再次读取变为 `FULL`。
+- 第一阶段 Persistence：创建匿名 session、分步保存 quiz answers、中断后 progress 恢复、重复提交同一步、乱序提交、未知 sessionId、非法输入拒绝、version conflict / optimistic locking。
+- 数据一致性：非法输入返回 400 后不会写入对应 step；旧 `version` 返回 409，避免旧页面或并发请求覆盖新数据；已提交为 `RESULT_READY` 的 assessment 不允许继续修改分步数据。
+- 数据验证：缺少 `version`、缺少 `data`、非法 stepKey、数字字段传字符串/null/object/array、畸形 JSON、危险 sessionId 都有显式测试。
+- 鉴权差异：非会员拿不到完整计划字段，且 `includeFull/debug/admin/subscriptionStatus=ACTIVE` 等 query 参数不能绕过服务端过滤。
+- 支付闭环：`/pay` 和 `/api/v1/payments/mock-callback` 都会校验 `sessionId`、`idempotencyKey` 和结果状态；成功后状态变为 `ACTIVE`，结果从 `LOCKED` 变 `FULL`。
+- 支付输入校验：非法 `amount`、`currency` 会返回 400，但这两个字段不是必填。
+- 幂等性：重复使用相同 `idempotencyKey` 不会重复创建同一 `PaymentEvent`；不同 `idempotencyKey` 会记录新事件但订阅状态保持 `ACTIVE`。
+- Session 隔离：只支付 session A 不会解锁 session B，B 仍返回 `LOCKED` 且不包含受保护字段。
+- API E2E：`tests/e2e/full-funnel-flow.test.ts` 覆盖创建 session、四步保存、progress 恢复、submit、LOCKED result、/pay、FULL result。
+
+测试记录见 `TEST_REPORT.md`。该文档说明了如何运行测试、覆盖了哪些 Persistence 和 Core Logic 场景、显式验证了哪些边界、为什么选择这些测试，以及暂未覆盖的内容。
 
 暂未覆盖：
 
-- 真实 PostgreSQL 集成测试：当前 CI 用内存 store 覆盖服务层行为，Prisma schema 和 migration 已提交。如果要验证数据库级锁和事务行为，可以在 CI 里增加 PostgreSQL service。
-- 浏览器端 E2E：前端可以手动走通。如果交付时间允许，建议补 Playwright 覆盖从首页到支付弹窗的完整路径。
+- CI 中的真实 PostgreSQL service：项目已提供 Prisma 集成测试，但当前本地环境没有配置 `TEST_DATABASE_URL` 时会跳过；CI 若要强制执行，需要增加 PostgreSQL service 并设置测试库连接串。
+- 浏览器端 E2E：当前已有 API 级 E2E；尚未用 Playwright 自动验证关闭页面后重新进入的浏览器恢复流程。原因是后端评分重点优先验证接口、持久化和权限逻辑。
+- 多设备恢复：当前 sessionId 存在浏览器 `localStorage`，没有账号体系；跨设备或清缓存后的恢复暂未覆盖。
 
 ## CI
 

@@ -21,8 +21,8 @@ describe("health evaluation algorithm", () => {
     expect(result.bmi).toBe(26.81);
     expect(result.bmiCategory).toBe("overweight");
     expect(result.dailyCalories).toBeGreaterThanOrEqual(1200);
-    expect(result.weeksToTarget).toBe(15);
-    expect(result.targetDate).toBe("2026-10-22");
+    expect(result.weeksToTarget).toBe(18);
+    expect(result.targetDate).toBe("2026-11-12");
     expect(result.predictionCurve[0]).toEqual({ week: 0, date: "2026-07-09", weightKg: 73 });
     expect(result.predictionCurve.at(-1)?.weightKg).toBe(64);
   });

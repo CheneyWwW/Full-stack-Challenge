@@ -13,7 +13,7 @@ type Progress = {
 };
 
 type ResultResponse = {
-  access: "preview" | "full";
+  access: "LOCKED" | "FULL";
   requiresPayment: boolean;
   subscriptionStatus: string;
   result: {
@@ -161,7 +161,10 @@ export default function Home() {
         `/api/v1/sessions/${progress.sessionId}/assessment-steps/${activeStep.key.toLowerCase()}`,
         {
           method: "PATCH",
-          body: JSON.stringify(payloadForStep(activeStep.key, form))
+          body: JSON.stringify({
+            version: progress.version,
+            data: payloadForStep(activeStep.key, form)
+          })
         }
       );
       setProgress(saved);
@@ -190,13 +193,13 @@ export default function Home() {
     if (!progress) return;
     setBusy(true);
     try {
-      await api("/pay", {
-        method: "POST",
-        body: JSON.stringify({
-          sessionId: progress.sessionId,
-          providerEventId: `demo_${progress.sessionId}`
-        })
-      });
+        await api("/pay", {
+          method: "POST",
+          body: JSON.stringify({
+            sessionId: progress.sessionId,
+            idempotencyKey: `demo_${progress.sessionId}`
+          })
+        });
       setResult(await api<ResultResponse>(`/api/v1/sessions/${progress.sessionId}/results`));
       setStatus("Payment callback applied. Full plan unlocked.");
     } catch (error) {
@@ -339,10 +342,10 @@ export default function Home() {
           </form>
         ) : (
           <section className="result">
-            <p className="kicker">{result.access === "full" ? "Full plan" : "Preview"}</p>
+            <p className="kicker">{result.access === "FULL" ? "Full plan" : "Locked preview"}</p>
             <h1>Your BMI is {result.result.bmi}</h1>
             <p className="support">Category: {result.result.bmiCategory}</p>
-            {result.access === "full" ? (
+            {result.access === "FULL" ? (
               <div className="result-grid">
                 <div>
                   <strong>{result.result.dailyCalories}</strong>

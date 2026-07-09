@@ -9,13 +9,21 @@ import {
 
 const genderSchema = z
   .object({
-    gender: z.enum(["female", "male", "non_binary", "prefer_not_to_say"])
+    gender: z.enum(["female", "male", "other", "non_binary", "prefer_not_to_say"])
   })
   .strict();
 
 const goalsSchema = z
   .object({
-    primaryGoal: z.enum(["lose_weight", "maintain_health", "build_strength", "improve_mobility"]),
+    primaryGoal: z.enum([
+      "lose_weight",
+      "maintain",
+      "gain_muscle",
+      "improve_fitness",
+      "maintain_health",
+      "build_strength",
+      "improve_mobility"
+    ]),
     focusAreas: z
       .array(z.enum(["belly", "legs", "arms", "back", "stress", "posture"]))
       .min(1, "Select at least one focus area")
@@ -25,10 +33,10 @@ const goalsSchema = z
 
 const bodySchema = z
   .object({
-    age: z.number().int().min(13).max(90),
-    heightCm: z.number().min(120).max(230),
-    weightKg: z.number().min(35).max(300),
-    targetWeightKg: z.number().min(35).max(300)
+    age: z.number().finite().int().min(13).max(90),
+    heightCm: z.number().finite().min(120).max(230),
+    weightKg: z.number().finite().min(35).max(300),
+    targetWeightKg: z.number().finite().min(35).max(300)
   })
   .strict()
   .superRefine((data, ctx) => {

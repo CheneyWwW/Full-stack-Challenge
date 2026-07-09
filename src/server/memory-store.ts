@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { HealthEvaluation, StepData, StepKey, SubscriptionStatus } from "@/src/domain/types";
-import { NotFoundError } from "./errors";
+import { HealthEvaluation, STEP_ORDER, StepData, StepKey, SubscriptionStatus } from "@/src/domain/types";
+import { ConflictError, NotFoundError } from "./errors";
 import {
   AssessmentStore,
   PaymentActivationInput,
@@ -26,6 +26,11 @@ function cloneSession(session: MutableSession): SessionRecord {
     steps: Array.from(session.steps.values()).sort((a, b) => a.position - b.position),
     result: session.result ? { ...session.result, predictionCurve: [...session.result.predictionCurve] } : null
   };
+}
+
+function furthestStep(currentStep: StepKey | null, nextStep: StepKey): StepKey {
+  if (!currentStep) return nextStep;
+  return STEP_ORDER.indexOf(nextStep) > STEP_ORDER.indexOf(currentStep) ? nextStep : currentStep;
 }
 
 export class MemoryAssessmentStore implements AssessmentStore {
@@ -57,6 +62,12 @@ export class MemoryAssessmentStore implements AssessmentStore {
   async saveStep(input: SaveStepInput): Promise<SessionRecord> {
     const session = this.sessions.get(input.sessionId);
     if (!session) throw new NotFoundError("Session not found");
+    if (session.assessmentStatus !== "DRAFT") {
+      throw new ConflictError("Assessment can no longer be modified");
+    }
+    if (input.expectedVersion !== session.version) {
+      throw new ConflictError("Assessment version conflict");
+    }
 
     const existing = session.steps.get(input.stepKey);
     session.steps.set(input.stepKey, {
@@ -66,7 +77,7 @@ export class MemoryAssessmentStore implements AssessmentStore {
       version: existing ? existing.version + 1 : 1,
       updatedAt: nowIso()
     });
-    session.currentStep = input.stepKey;
+    session.currentStep = furthestStep(session.currentStep, input.stepKey);
     session.version += 1;
     return cloneSession(session);
   }
@@ -80,7 +91,7 @@ export class MemoryAssessmentStore implements AssessmentStore {
       predictionCurve: [...result.predictionCurve],
       createdAt: nowIso()
     };
-    session.assessmentStatus = "COMPLETED";
+    session.assessmentStatus = "RESULT_READY";
     session.version += 1;
     return cloneSession(session);
   }
@@ -95,7 +106,7 @@ export class MemoryAssessmentStore implements AssessmentStore {
         session.subscriptionStatus = "ACTIVE";
         return { subscriptionStatus: "ACTIVE", idempotent: true };
       }
-      throw new Error("Payment event belongs to another session");
+      throw new ConflictError("Payment event belongs to another session");
     }
 
     this.paymentEvents.set(input.providerEventId, input.sessionId);

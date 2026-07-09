@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ValidationProblem } from "@/src/domain/validation";
-import { ConflictError, NotFoundError } from "./errors";
+import { BadRequestError, ConflictError, NotFoundError } from "./errors";
 import { MemoryAssessmentStore } from "./memory-store";
 import { PrismaAssessmentStore } from "./prisma-store";
 import { prisma } from "./prisma";
@@ -33,6 +33,13 @@ export function ok<T>(data: T, init?: ResponseInit) {
 }
 
 export function toErrorResponse(error: unknown) {
+  if (error instanceof BadRequestError) {
+    return NextResponse.json(
+      { error: { code: "BAD_REQUEST", message: error.message } },
+      { status: 400 }
+    );
+  }
+
   if (error instanceof ValidationProblem) {
     return NextResponse.json(
       {

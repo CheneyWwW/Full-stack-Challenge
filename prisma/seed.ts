@@ -3,6 +3,7 @@ import { PrismaAssessmentStore } from "../src/server/prisma-store";
 import {
   activateSubscription,
   createSession,
+  getProgress,
   saveAssessmentStep,
   submitAssessment
 } from "../src/server/workflows";
@@ -18,14 +19,18 @@ const demoSteps = [
 
 async function buildDemo(sessionId: string, paid: boolean) {
   await createSession(store, { sessionId });
+  let progress = await getProgress(store, sessionId);
   for (const [stepKey, payload] of demoSteps) {
-    await saveAssessmentStep(store, sessionId, stepKey, payload);
+    progress = await saveAssessmentStep(store, sessionId, stepKey, {
+      version: progress.version,
+      data: payload
+    });
   }
   await submitAssessment(store, sessionId, new Date("2026-07-09T00:00:00.000Z"));
   if (paid) {
     await activateSubscription(store, {
       sessionId,
-      providerEventId: `seed_${sessionId}`
+      idempotencyKey: `seed_${sessionId}`
     });
   }
 }
