@@ -112,6 +112,7 @@ export default function Home() {
   const [result, setResult] = useState<ResultResponse | null>(null);
   const [status, setStatus] = useState("Preparing your assessment...");
   const [busy, setBusy] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const activeStep = steps[activeIndex];
   const percent = Math.round(((activeIndex + 1) / steps.length) * 100);
@@ -189,7 +190,7 @@ export default function Home() {
     }
   }
 
-  async function unlockPlan() {
+  async function completeMockPayment() {
     if (!progress) return;
     setBusy(true);
     try {
@@ -201,6 +202,7 @@ export default function Home() {
           })
         });
       setResult(await api<ResultResponse>(`/api/v1/sessions/${progress.sessionId}/results`));
+      setCheckoutOpen(false);
       setStatus("Payment callback applied. Full plan unlocked.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Unable to unlock.");
@@ -363,7 +365,7 @@ export default function Home() {
             ) : (
               <>
                 <p className="locked">{result.paywall?.message}</p>
-                <button className="primary" onClick={unlockPlan} disabled={busy}>
+                <button className="primary" onClick={() => setCheckoutOpen(true)} disabled={busy}>
                   Unlock Full Plan
                 </button>
               </>
@@ -372,6 +374,47 @@ export default function Home() {
         )}
         <p className="status">{status}</p>
       </section>
+
+      {checkoutOpen && result?.access === "LOCKED" && (
+        <div className="checkout-backdrop" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+          <section className="checkout">
+            <button
+              className="icon-button"
+              type="button"
+              aria-label="Close checkout"
+              onClick={() => setCheckoutOpen(false)}
+              disabled={busy}
+            >
+              x
+            </button>
+            <p className="kicker">Secure mock checkout</p>
+            <h2 id="checkout-title">Unlock your full plan</h2>
+            <p className="support">
+              Get your complete calorie target, timeline, forecast, and weekly action plan.
+            </p>
+            <div className="checkout-summary">
+              <span>Home Wellness Plan</span>
+              <strong>$9.99</strong>
+            </div>
+            <ul className="unlock-list">
+              {(result.paywall?.unlocks ?? [
+                "personalized calorie target",
+                "target timeline",
+                "progress forecast",
+                "weekly action plan"
+              ]).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            <button className="primary" onClick={completeMockPayment} disabled={busy}>
+              {busy ? "Processing..." : "Complete Mock Payment"}
+            </button>
+            <button className="secondary" type="button" onClick={() => setCheckoutOpen(false)} disabled={busy}>
+              Not now
+            </button>
+          </section>
+        </div>
+      )}
 
       <aside className="visual">
         <img
