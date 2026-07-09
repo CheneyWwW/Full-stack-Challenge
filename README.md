@@ -88,7 +88,7 @@ npm run db:seed
 
 交付信息：
 
-- 线上演示地址：`TODO: 部署到 Vercel 后填写`
+- 线上演示地址：`https://full-stack-challenge-enu3gg1cs-cheney-ww-w.vercel.app`
 - GitHub 仓库：`https://github.com/CheneyWwW/Full-stack-Challenge`
 - 未付费测试 sessionId：`demo_free_session`，用于查看 `LOCKED` 结果
 - 已付费测试 sessionId：`demo_paid_session`，用于直接查看 `FULL` 结果
@@ -105,6 +105,7 @@ curl -X POST "$BASE_URL/pay" \
 部署后验收 checklist：
 
 - 打开 Vercel URL，手动走完整 quiz funnel。
+- 如果浏览器里已经保存过旧 session，点击页面顶部 `Start over` 可清除本地 session 并重新开始一次完整 funnel。
 - `GET $BASE_URL/api/v1/sessions/demo_free_session/results` 返回 `LOCKED`。
 - `GET $BASE_URL/api/v1/sessions/demo_paid_session/results` 返回 `FULL`。
 - `GET $BASE_URL/api/v1/sessions/demo_pay_session/results` 首次返回 `LOCKED`。

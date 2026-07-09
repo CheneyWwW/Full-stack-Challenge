@@ -129,6 +129,10 @@ const defaultForm: FormState = {
   activityFrequency: "light"
 };
 
+function freshDefaultForm(): FormState {
+  return { ...defaultForm, focusAreas: [...defaultForm.focusAreas] };
+}
+
 function payloadForStep(step: StepKey, form: FormState) {
   if (step === "GENDER") return { gender: form.gender };
   if (step === "GOALS") return { primaryGoal: form.primaryGoal, focusAreas: form.focusAreas };
@@ -159,7 +163,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export default function Home() {
-  const [form, setForm] = useState<FormState>(defaultForm);
+  const [form, setForm] = useState<FormState>(() => freshDefaultForm());
   const [progress, setProgress] = useState<Progress | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [interlude, setInterlude] = useState<InterludeKey | null>(null);
@@ -195,10 +199,27 @@ export default function Home() {
         window.localStorage.setItem("health-session-id", nextProgress.sessionId);
         setProgress(nextProgress);
         setForm((current) => ({ ...current, ...nextProgress.draft }));
+        setResult(null);
+        setInterlude(null);
+        setIsAnalyzing(false);
         const nextIndex = nextProgress.nextStep
           ? steps.findIndex((step) => step.key === nextProgress.nextStep)
           : steps.length - 1;
         setActiveIndex(Math.max(0, nextIndex));
+        const isComplete =
+          nextProgress.nextStep === null ||
+          steps.every((step) => nextProgress.completedSteps.includes(step.key));
+        if (loaded && isComplete) {
+          const restoredResult = await api<ResultResponse>(
+            `/api/v1/sessions/${nextProgress.sessionId}/results`
+          ).catch(() => null);
+          if (cancelled) return;
+          if (restoredResult) {
+            setResult(restoredResult);
+            setStatus("Result restored.");
+            return;
+          }
+        }
         setStatus(loaded ? "Progress restored." : "Session created.");
       } catch (error) {
         setStatus(error instanceof Error ? error.message : "Unable to start assessment.");
@@ -275,6 +296,28 @@ export default function Home() {
     setStatus("Ready for the next step.");
   }
 
+  async function startOver() {
+    setBusy(true);
+    setCheckoutOpen(false);
+    setResult(null);
+    setInterlude(null);
+    setIsAnalyzing(false);
+    setStatus("Starting a new assessment...");
+    try {
+      window.localStorage.removeItem("health-session-id");
+      const nextProgress = await api<Progress>("/api/v1/sessions", { method: "POST" });
+      window.localStorage.setItem("health-session-id", nextProgress.sessionId);
+      setProgress(nextProgress);
+      setForm(freshDefaultForm());
+      setActiveIndex(0);
+      setStatus("New session created.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Unable to restart assessment.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function completeMockPayment() {
     if (!progress) return;
     setBusy(true);
@@ -300,8 +343,15 @@ export default function Home() {
     <main className="shell">
       <section className="panel">
         <div className="brandbar">
-          <span className="mark">HW</span>
-          <span>Home Wellness</span>
+          <div className="brand-id">
+            <span className="mark">HW</span>
+            <span>Home Wellness</span>
+          </div>
+          {progress && (
+            <button className="reset-link" type="button" onClick={startOver} disabled={busy}>
+              Start over
+            </button>
+          )}
         </div>
         <div className="funnel-meta" aria-label="Assessment details">
           <span>2 min quiz</span>
