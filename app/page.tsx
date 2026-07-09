@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type StepKey = "GENDER" | "GOALS" | "BODY" | "ACTIVITY";
+type InterludeKey = "GENDER" | "GOALS" | "BODY";
 
 type Progress = {
   sessionId: string;
@@ -66,6 +67,57 @@ const steps: Array<{ key: StepKey; label: string; title: string; copy: string }>
   }
 ];
 
+const interludeOrder: InterludeKey[] = ["GENDER", "GOALS", "BODY"];
+
+const interludes: Record<
+  InterludeKey,
+  { label: string; title: string; copy: string; stat: string; statLabel: string; bullets: string[] }
+> = {
+  GENDER: {
+    label: "Plan fit",
+    title: "Your plan should feel doable from day one",
+    copy: "Most people quit when the first week feels too intense. We use your profile to keep the starting pace realistic.",
+    stat: "3",
+    statLabel: "setup checks before the plan starts",
+    bullets: ["Beginner-friendly pacing", "At-home routine assumptions", "Progress saved automatically"]
+  },
+  GOALS: {
+    label: "Personalization",
+    title: "We are narrowing the plan around your priorities",
+    copy: "The next estimate combines your goal, focus areas, and current body data. This is the part that makes the result page more than a generic BMI card.",
+    stat: "4",
+    statLabel: "signals used before the result is generated",
+    bullets: ["Primary outcome", "Target body areas", "Starting metrics", "Activity level"]
+  },
+  BODY: {
+    label: "Health profile",
+    title: "A safe timeline matters more than a dramatic one",
+    copy: "Before showing your preview, we check whether the target pace is reasonable and avoid calorie guidance below a safe floor.",
+    stat: "0.5kg",
+    statLabel: "estimated weekly pace used for the target date",
+    bullets: ["BMI category", "Daily calorie target", "Goal prediction date"]
+  }
+};
+
+const stepInsights: Record<StepKey, { title: string; points: string[] }> = {
+  GENDER: {
+    title: "Why we ask",
+    points: ["BMR formulas differ by sex", "You can choose a privacy-preserving option"]
+  },
+  GOALS: {
+    title: "What this changes",
+    points: ["Calories are adjusted by goal", "Focus areas shape the preview copy"]
+  },
+  BODY: {
+    title: "Server-side calculation",
+    points: ["BMI and timeline are computed after submit", "Invalid ranges are rejected by the API"]
+  },
+  ACTIVITY: {
+    title: "Plan intensity",
+    points: ["Activity changes TDEE", "The preview uses your current routine, not an ideal one"]
+  }
+};
+
 const defaultForm: FormState = {
   gender: "female",
   primaryGoal: "lose_weight",
@@ -110,6 +162,7 @@ export default function Home() {
   const [form, setForm] = useState<FormState>(defaultForm);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [interlude, setInterlude] = useState<InterludeKey | null>(null);
   const [result, setResult] = useState<ResultResponse | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [status, setStatus] = useState("Preparing your assessment...");
@@ -117,7 +170,17 @@ export default function Home() {
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const activeStep = steps[activeIndex];
-  const percent = result ? 100 : isAnalyzing ? 92 : Math.round(((activeIndex + 1) / steps.length) * 100);
+  const activeInterlude = interlude ? interludes[interlude] : null;
+  const completedInterludes = interludeOrder.filter(
+    (key) => steps.findIndex((step) => step.key === key) < activeIndex
+  ).length;
+  const currentScreenCount = activeIndex + 1 + completedInterludes + (activeInterlude ? 1 : 0);
+  const totalScreens = steps.length + interludeOrder.length + 1;
+  const percent = result
+    ? 100
+    : isAnalyzing
+      ? 92
+      : Math.min(90, Math.round((currentScreenCount / totalScreens) * 100));
 
   useEffect(() => {
     let cancelled = false;
@@ -172,7 +235,9 @@ export default function Home() {
       );
       setProgress(saved);
       setStatus("Saved.");
-      if (activeIndex < steps.length - 1) {
+      if (activeStep.key in interludes) {
+        setInterlude(activeStep.key as InterludeKey);
+      } else if (activeIndex < steps.length - 1) {
         setActiveIndex((index) => index + 1);
       } else {
         await api<{ result: ResultResponse["result"] }>(
@@ -195,21 +260,32 @@ export default function Home() {
   }
 
   function goBack() {
+    if (activeInterlude) {
+      setInterlude(null);
+      setStatus("You can adjust your previous answer.");
+      return;
+    }
     setActiveIndex((index) => Math.max(0, index - 1));
     setStatus("You can adjust your previous answer.");
+  }
+
+  function continueInterlude() {
+    setInterlude(null);
+    setActiveIndex((index) => Math.min(steps.length - 1, index + 1));
+    setStatus("Ready for the next step.");
   }
 
   async function completeMockPayment() {
     if (!progress) return;
     setBusy(true);
     try {
-        await api("/pay", {
-          method: "POST",
-          body: JSON.stringify({
-            sessionId: progress.sessionId,
-            idempotencyKey: `demo_${progress.sessionId}`
-          })
-        });
+      await api("/pay", {
+        method: "POST",
+        body: JSON.stringify({
+          sessionId: progress.sessionId,
+          idempotencyKey: `demo_${progress.sessionId}`
+        })
+      });
       setResult(await api<ResultResponse>(`/api/v1/sessions/${progress.sessionId}/results`));
       setCheckoutOpen(false);
       setStatus("Payment callback applied. Full plan unlocked.");
@@ -236,7 +312,15 @@ export default function Home() {
           <span style={{ width: `${percent}%` }} />
         </div>
         <p className="kicker">
-          {isAnalyzing ? "Analyzing" : result ? (result.access === "FULL" ? "Full plan" : "Preview ready") : `${activeStep.label} ${activeIndex + 1}/${steps.length}`}
+          {isAnalyzing
+            ? "Analyzing"
+            : result
+              ? result.access === "FULL"
+                ? "Full plan"
+                : "Preview ready"
+              : activeInterlude
+                ? activeInterlude.label
+                : `${activeStep.label} ${activeIndex + 1}/${steps.length}`}
         </p>
         {isAnalyzing ? (
           <section className="analysis">
@@ -251,6 +335,28 @@ export default function Home() {
               <span>Profile saved</span>
               <span>Health estimate calculated</span>
               <span>Preview being prepared</span>
+            </div>
+          </section>
+        ) : activeInterlude ? (
+          <section className="interlude">
+            <div className="stat-badge">
+              <strong>{activeInterlude.stat}</strong>
+              <span>{activeInterlude.statLabel}</span>
+            </div>
+            <h1>{activeInterlude.title}</h1>
+            <p className="support">{activeInterlude.copy}</p>
+            <div className="insight-list">
+              {activeInterlude.bullets.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+            <div className="button-row">
+              <button className="secondary" type="button" onClick={goBack} disabled={busy}>
+                Back
+              </button>
+              <button className="primary" type="button" onClick={continueInterlude} disabled={busy}>
+                Continue
+              </button>
             </div>
           </section>
         ) : !result ? (
@@ -369,6 +475,13 @@ export default function Home() {
               </div>
             )}
 
+            <aside className="step-insight">
+              <strong>{stepInsights[activeStep.key].title}</strong>
+              {stepInsights[activeStep.key].points.map((point) => (
+                <span key={point}>{point}</span>
+              ))}
+            </aside>
+
             <div className="button-row">
               {activeIndex > 0 && (
                 <button className="secondary" type="button" onClick={goBack} disabled={busy}>
@@ -413,6 +526,11 @@ export default function Home() {
               </>
             ) : (
               <>
+                <div className="preview-ribbon">
+                  <span>BMI preview ready</span>
+                  <span>Full plan locked</span>
+                  <span>Mock payment available</span>
+                </div>
                 <p className="locked">{result.paywall?.message}</p>
                 <div className="locked-grid">
                   <div>
@@ -459,6 +577,10 @@ export default function Home() {
               <span>Home Wellness Plan</span>
               <strong>$9.99</strong>
             </div>
+            <div className="checkout-trust">
+              <span>No real card is charged</span>
+              <span>Payment callback updates the database</span>
+            </div>
             <div className="mock-card">
               <span>Mock card</span>
               <strong>4242 4242 4242 4242</strong>
@@ -490,6 +612,11 @@ export default function Home() {
         />
         <div>
           <p>Small steps, realistic targets, and a plan that meets you where you are.</p>
+          <ul className="visual-list">
+            <li>Saved quiz progress</li>
+            <li>Server-generated health result</li>
+            <li>Locked preview before mock payment</li>
+          </ul>
           <span>Session: {progress?.sessionId ?? "creating..."}</span>
         </div>
       </aside>

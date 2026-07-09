@@ -97,7 +97,8 @@ select {
 
 .flow,
 .result,
-.analysis {
+.analysis,
+.interlude {
   display: grid;
   gap: 20px;
 }
@@ -276,6 +277,21 @@ select,
   color: #6b4c13;
 }
 
+.preview-ribbon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preview-ribbon span {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--mint);
+  color: var(--green);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
 .analysis {
   align-content: start;
 }
@@ -307,7 +323,11 @@ select,
   gap: 10px;
 }
 
-.analysis-list span {
+.analysis-list span,
+.insight-list span,
+.step-insight span,
+.checkout-trust span,
+.visual-list li {
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -315,6 +335,53 @@ select,
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--muted);
+}
+
+.interlude {
+  align-content: start;
+}
+
+.stat-badge {
+  display: grid;
+  gap: 4px;
+  width: min(100%, 280px);
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--mint);
+  color: var(--green);
+}
+
+.stat-badge strong {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.stat-badge span {
+  color: #35695f;
+  line-height: 1.35;
+}
+
+.insight-list,
+.step-insight,
+.checkout-trust {
+  display: grid;
+  gap: 10px;
+}
+
+.step-insight {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f7fbf9;
+}
+
+.step-insight strong {
+  color: var(--green);
+}
+
+.step-insight span {
+  min-height: 38px;
+  background: var(--white);
 }
 
 .result-grid,
@@ -419,6 +486,15 @@ select,
   letter-spacing: 0.04em;
 }
 
+.checkout-trust {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.checkout-trust span {
+  min-height: 48px;
+  background: var(--white);
+}
+
 .unlock-list {
   margin: 0;
   padding: 0;
@@ -442,6 +518,22 @@ select,
   height: 8px;
   border-radius: 999px;
   background: var(--green);
+}
+
+.visual-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+
+.visual-list li {
+  min-height: 40px;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  color: #edf4f1;
+  backdrop-filter: blur(10px);
 }
 
 @media (max-width: 820px) {
@@ -479,5 +571,9 @@ select,
   .mock-card {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .checkout-trust {
+    grid-template-columns: 1fr;
   }
 }
