@@ -65,7 +65,7 @@ npm run db:seed
 交付信息：
 
 - 线上演示地址：`TODO: 部署到 Vercel 后填写`
-- GitHub 仓库：`TODO: 提交仓库后填写`
+- GitHub 仓库：`https://github.com/CheneyWwW/Full-stack-Challenge`
 - 已支付测试 sessionId：`demo_paid_session`
 - 未支付测试 sessionId：`demo_free_session`
 
