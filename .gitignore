@@ -9,3 +9,10 @@ __pycache__/
 *.egg-info/
 outputs/*
 !outputs/.gitkeep
+node_modules/
+.next/
+coverage/
+dist/
+*.tsbuildinfo
+.playwright-cli/
+output/

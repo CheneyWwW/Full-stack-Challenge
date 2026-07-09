@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AssessmentStatus {
+  DRAFT
+  COMPLETED
+}
+
+enum SubscriptionStatus {
+  FREE
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
+
+enum StepKey {
+  GENDER
+  GOALS
+  BODY
+  ACTIVITY
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  subscriptionStatus SubscriptionStatus @default(FREE)
+
+  assessment    Assessment?
+  subscription  Subscription?
+  paymentEvents PaymentEvent[]
+
+  @@index([subscriptionStatus])
+}
+
+model Assessment {
+  id          String           @id @default(cuid())
+  userId      String           @unique
+  status      AssessmentStatus @default(DRAFT)
+  currentStep StepKey?
+  version     Int              @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  completedAt DateTime?
+
+  user   User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps  AssessmentStep[]
+  result HealthResult?
+
+  @@index([status])
+}
+
+model AssessmentStep {
+  id           String   @id @default(cuid())
+  assessmentId String
+  stepKey      StepKey
+  data         Json
+  position     Int
+  version      Int      @default(1)
+  completedAt  DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, stepKey])
+  @@index([assessmentId, position])
+}
+
+model HealthResult {
+  id              String   @id @default(cuid())
+  assessmentId    String   @unique
+  bmi             Float
+  bmiCategory     String
+  dailyCalories   Int
+  targetDate      DateTime
+  weeksToTarget   Int
+  predictionCurve Json
+  createdAt       DateTime @default(now())
+
+  assessment Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id               String             @id @default(cuid())
+  userId           String             @unique
+  status           SubscriptionStatus @default(FREE)
+  provider         String             @default("mock")
+  activatedAt      DateTime?
+  currentPeriodEnd DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+model PaymentEvent {
+  id              String   @id @default(cuid())
+  userId          String
+  provider        String   @default("mock")
+  providerEventId String   @unique
+  eventType       String
+  rawPayload      Json
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
