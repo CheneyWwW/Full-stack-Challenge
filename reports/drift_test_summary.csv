@@ -1,3 +1,0 @@
-image_id,label,split,runs,score_min,score_max,score_delta,changed_factors,marketplace_listing_signal_counts
-strong_case_003,strong,train,10,100,100,0,none,campaign_like:10
-weak_case_002,weak,train,10,29,49,20,"contrast_and_legibility, product_prominence, visual_hierarchy",generic_listing:10
