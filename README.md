@@ -12,18 +12,25 @@
 
 ## 快速启动
 
+不配置数据库时，开发环境会使用内存 store，可以先跑通前端和 API 流程：
+
 ```bash
 npm install
-cp .env.example .env
+npm run dev
+```
+
+本地打开 `http://localhost:3000`，可以从头走完测评，先看到非会员脱敏结果，再点击模拟支付解锁完整结果。
+
+如果要使用本地 PostgreSQL 持久化，请复制 `.env.example` 为 `.env`，把 `DATABASE_URL` 和 `DIRECT_URL` 从占位符改成真实本地连接串，然后运行：
+
+```bash
 npm run db:generate
 npm run db:push
 npm run db:seed
 npm run dev
 ```
 
-本地打开 `http://localhost:3000`，可以从头走完测评，先看到非会员脱敏结果，再点击模拟支付解锁完整结果。
-
-本地开发如果没有配置 `DATABASE_URL`，服务会自动使用内存 store，方便先演示接口和前端流程；配置 PostgreSQL 后会走 Prisma 持久化。线上交付必须配置真实 `DATABASE_URL`。
+本地开发如果没有配置 `DATABASE_URL`，服务会自动使用内存 store；配置 PostgreSQL 后会走 Prisma 持久化。线上交付必须配置真实 `DATABASE_URL` 和 `DIRECT_URL`。
 
 一键质量验证：
 
@@ -41,33 +48,68 @@ npm run ci
 
 ## 部署说明
 
-推荐使用 Vercel + Supabase/Neon PostgreSQL。
+推荐使用 Vercel + Supabase PostgreSQL。
 
 ```bash
-npm run db:generate
 npm run build
 ```
 
-部署后需要配置环境变量：
+### Vercel 环境变量
 
-```env
-DATABASE_URL=postgresql://...
-NEXT_PUBLIC_APP_URL=https://your-domain.example
-```
+在 Vercel Project Settings 中配置：
 
-线上初始化数据库：
+| 变量 | 用途 |
+| --- | --- |
+| `DATABASE_URL` | Supabase pooled PostgreSQL connection string，用于 Vercel 运行时连接数据库 |
+| `DIRECT_URL` | Supabase direct PostgreSQL connection string，用于 Prisma migration |
+| `NEXT_PUBLIC_APP_URL` | Vercel production URL，例如 `https://your-app.vercel.app` |
+
+不要在 Vercel Production 配置 `TEST_DATABASE_URL`。它只用于本地测试或 CI，避免测试误连生产数据库。
+
+`.env.example` 只提供占位符，不包含真实 Supabase 密码。真实连接串只放在本地 `.env` 或 Vercel 环境变量中。
+
+### Supabase 初始化
+
+1. 创建 Supabase project，并复制 pooled connection string 和 direct connection string。
+2. 在 Vercel 配置 `DATABASE_URL`、`DIRECT_URL`、`NEXT_PUBLIC_APP_URL`。
+3. 执行生产迁移：
 
 ```bash
-npm run db:push
+npm run db:deploy
+```
+
+4. 写入演示数据：
+
+```bash
 npm run db:seed
 ```
+
+生产环境使用 `npm run db:deploy`，不使用 `npm run db:push`。`db:push` 只适合本地开发或测试数据库快速同步 schema。
 
 交付信息：
 
 - 线上演示地址：`TODO: 部署到 Vercel 后填写`
 - GitHub 仓库：`https://github.com/CheneyWwW/Full-stack-Challenge`
-- 已支付测试 sessionId：`demo_paid_session`
-- 未支付测试 sessionId：`demo_free_session`
+- 未付费测试 sessionId：`demo_free_session`，用于查看 `LOCKED` 结果
+- 已付费测试 sessionId：`demo_paid_session`，用于直接查看 `FULL` 结果
+- 支付演示 sessionId：`demo_pay_session`，用于调用 `/pay` 演示 `LOCKED -> FULL`
+
+`/pay` 演示：
+
+```bash
+curl -X POST "$BASE_URL/pay" \
+  -H "Content-Type: application/json" \
+  -d '{"sessionId":"demo_pay_session","idempotencyKey":"demo_payment_001"}'
+```
+
+部署后验收 checklist：
+
+- 打开 Vercel URL，手动走完整 quiz funnel。
+- `GET $BASE_URL/api/v1/sessions/demo_free_session/results` 返回 `LOCKED`。
+- `GET $BASE_URL/api/v1/sessions/demo_paid_session/results` 返回 `FULL`。
+- `GET $BASE_URL/api/v1/sessions/demo_pay_session/results` 首次返回 `LOCKED`。
+- 调用上面的 `/pay` curl。
+- 再次 `GET $BASE_URL/api/v1/sessions/demo_pay_session/results` 返回 `FULL`。
 
 ## API 文档
 
@@ -350,8 +392,10 @@ npm run test:e2e
 
 运行真实 Prisma/PostgreSQL 持久化集成测试：
 
-```bash
+```powershell
 $env:TEST_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/health_assessment_test?schema=public"
+$env:DATABASE_URL=$env:TEST_DATABASE_URL
+$env:DIRECT_URL=$env:TEST_DATABASE_URL
 npm run db:push
 npm test -- tests/integration/assessment-submit-result.test.ts
 ```
@@ -368,7 +412,7 @@ npm test -- tests/integration/result-access-payment.test.ts
 npm run test:e2e
 ```
 
-如果没有设置 `TEST_DATABASE_URL` 或 `DATABASE_URL`，Prisma 数据库断言会被 Vitest 标记为 skipped，避免误连线上数据库；配置测试库后会使用 `PrismaAssessmentStore`、真实 `HealthResult`、`Subscription` 和 `PaymentEvent` 表验证持久化。
+Prisma 数据库断言只读取 `TEST_DATABASE_URL`。如果没有设置 `TEST_DATABASE_URL`，相关集成测试会被 Vitest 标记为 skipped；测试不会 fallback 到 `DATABASE_URL`，避免误连 Supabase production 数据库。配置测试库后会使用 `PrismaAssessmentStore`、真实 `HealthResult`、`Subscription` 和 `PaymentEvent` 表验证持久化。
 
 当前覆盖范围：
 
@@ -390,7 +434,7 @@ npm run test:e2e
 
 暂未覆盖：
 
-- CI 中的真实 PostgreSQL service：项目已提供 Prisma 集成测试，但当前本地环境没有配置 `TEST_DATABASE_URL` 时会跳过；CI 若要强制执行，需要增加 PostgreSQL service 并设置测试库连接串。
+- 本地未配置 `TEST_DATABASE_URL` 时，Prisma/PostgreSQL 集成测试会跳过；GitHub Actions CI 已配置 PostgreSQL service，并设置 `DATABASE_URL`、`DIRECT_URL` 和 `TEST_DATABASE_URL` 指向 CI 临时测试库，因此 CI 会运行数据库集成测试。
 - 浏览器端 E2E：当前已有 API 级 E2E；尚未用 Playwright 自动验证关闭页面后重新进入的浏览器恢复流程。原因是后端评分重点优先验证接口、持久化和权限逻辑。
 - 多设备恢复：当前 sessionId 存在浏览器 `localStorage`，没有账号体系；跨设备或清缓存后的恢复暂未覆盖。
 
@@ -400,9 +444,11 @@ CI 接入建议执行内容：
 
 ```bash
 npm ci
-npm run db:generate
+npx prisma generate
+npx prisma db push
 npm run typecheck
 npm test
+npm run build
 ```
 
 ## 核心目录

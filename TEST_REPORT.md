@@ -35,6 +35,8 @@ npm test -- tests/unit/health-calculator.test.ts
 
 ```powershell
 $env:TEST_DATABASE_URL="postgresql://postgres:postgres@localhost:5432/health_assessment_test?schema=public"
+$env:DATABASE_URL=$env:TEST_DATABASE_URL
+$env:DIRECT_URL=$env:TEST_DATABASE_URL
 npm run db:push
 npm test -- tests/integration/assessment-submit-result.test.ts
 ```
@@ -51,7 +53,7 @@ npm test -- tests/integration/result-access-payment.test.ts
 npm run test:e2e
 ```
 
-说明：如果没有设置 `TEST_DATABASE_URL` 或 `DATABASE_URL`，Prisma 集成测试会被标记为 skipped，避免误连非测试数据库。配置测试库后，该测试使用 `PrismaAssessmentStore` 和真实数据库表，不使用内存 store。
+说明：Prisma 集成测试只认 `TEST_DATABASE_URL`。如果没有设置 `TEST_DATABASE_URL`，数据库集成测试会被标记为 skipped；测试不会 fallback 到 `DATABASE_URL`，这样可以避免误连 Supabase production 数据库。配置测试库后，该测试使用 `PrismaAssessmentStore` 和真实数据库表，不使用内存 store。
 
 如果需要同时检查 TypeScript 类型：
 
@@ -65,14 +67,15 @@ npm run ci
 - `npm test`：通过
 - 测试文件：7 个通过，1 个因未配置测试数据库跳过
 - 测试用例：96 个通过，7 个因未配置测试数据库跳过
+- Prisma/PostgreSQL 集成测试：配置 `TEST_DATABASE_URL` 后通过，2 个测试文件、17 个用例通过
 - 第一阶段 API 测试文件：`tests/persistence-api.test.ts`，22 个用例通过
 - 第一阶段补充校验文件：`tests/integration/persistence-api.test.ts`，11 个用例通过
 - 第二阶段算法测试文件：`tests/unit/health-calculator.test.ts`，41 个用例通过
-- 第二阶段 Prisma 集成测试文件：`tests/integration/assessment-submit-result.test.ts`，配置 `TEST_DATABASE_URL` 后运行
-- 第三阶段访问控制测试文件：`tests/integration/result-access-payment.test.ts`，Memory API 用例通过；Prisma 数据库用例配置 `TEST_DATABASE_URL` 后运行
+- 第二阶段 Prisma 集成测试文件：`tests/integration/assessment-submit-result.test.ts`，配置 `TEST_DATABASE_URL` 后 5 个用例通过
+- 第三阶段访问控制测试文件：`tests/integration/result-access-payment.test.ts`，Memory/API 和 Prisma 数据库用例均通过，12 个用例通过
 - API E2E 测试文件：`tests/e2e/full-funnel-flow.test.ts`，1 个完整 funnel 用例通过
 
-## 覆盖的核心流程
+## 第一阶段 Persistence 测试
 
 本阶段测试聚焦用户匿名测评数据的保存与恢复，不覆盖结果计算、支付、会员鉴权等后续阶段。
 
@@ -93,7 +96,7 @@ npm run ci
 - 数字字段传字符串、null、object、array 或畸形 JSON 会被拒绝，且不会污染 progress。
 - 危险 sessionId 字符串不会被解析成其他资源。
 
-## 分步保存与进度恢复场景
+### 分步保存与进度恢复场景
 
 `tests/persistence-api.test.ts` 显式验证了这些场景：
 
@@ -105,7 +108,7 @@ npm run ci
 - 乱序提交后，`currentStep` 不会从较后的 step 倒退到较早的 step。
 - 两次连续 PATCH 后，`version` 正确从 0 递增到 1，再递增到 2。
 
-## Version 乐观锁覆盖
+### Version 乐观锁覆盖
 
 本阶段新增了 version 乐观锁，防止旧页面或并发请求覆盖较新的测评数据。
 
@@ -120,7 +123,7 @@ npm run ci
 
 当前实现是乐观锁，不是数据库悲观锁。Prisma store 会在事务内检查当前 `Assessment.version` 和 status；内存 store 在测试中使用同样的业务规则，保证本地测试和生产逻辑一致。
 
-## 显式验证的边界与异常
+### 显式验证的边界与异常
 
 已覆盖的异常路径：
 
@@ -150,7 +153,7 @@ npm run ci
 - 对目标体重大于当前体重的减重场景，保留已合法保存的 `GOALS`，但不保存非法 `BODY`。
 - 对 malformed numeric payload，断言 `BODY` 不进入 `completedSteps`，`draft` 仍为空。
 
-## 为什么选择这些场景
+### 为什么选择这些场景
 
 这些测试场景对应第一阶段最容易影响数据一致性的风险：
 
@@ -260,7 +263,7 @@ Prisma/PostgreSQL 部分在配置 `TEST_DATABASE_URL` 后额外验证：
 
 ## 暂未覆盖及原因
 
-- CI 中强制执行 PostgreSQL 集成测试：项目已经提供 Prisma 集成测试，但当前本地未配置测试数据库时会 skipped。CI 要强制执行，需要增加 PostgreSQL service 并设置 `TEST_DATABASE_URL`。
+- 本地未配置 `TEST_DATABASE_URL` 时，Prisma/PostgreSQL 集成测试会 skipped；GitHub Actions CI 已配置 PostgreSQL service，并设置 `DATABASE_URL`、`DIRECT_URL` 和 `TEST_DATABASE_URL` 指向 CI 临时测试库，因此 CI 中会运行数据库集成测试。
 - 浏览器 E2E：当前已有 API 级 E2E；尚未用 Playwright 驱动真实浏览器关闭/重开页面。原因是本项目评分重点是后端接口、持久化和权限逻辑，浏览器自动化可以作为后续补充。
 - 多设备恢复：当前 sessionId 保存在浏览器 `localStorage`，未覆盖跨设备或清缓存后的恢复。原因是需求允许基于简易 session 识别，当前实现不包含登录态或账号绑定。
 - 严格数据库级并发写入冲突：已测试旧 `version` 返回 409，但没有用真实数据库并发事务模拟两个请求同时命中同一版本。原因同上，需要 PostgreSQL 集成测试环境。

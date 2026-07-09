@@ -39,13 +39,14 @@ async function main() {
   await prisma.user.deleteMany({
     where: {
       id: {
-        in: ["demo_free_session", "demo_paid_session"]
+        in: ["demo_free_session", "demo_paid_session", "demo_pay_session"]
       }
     }
   });
 
   await buildDemo("demo_free_session", false);
   await buildDemo("demo_paid_session", true);
+  await buildDemo("demo_pay_session", false);
 }
 
 main()

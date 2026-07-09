@@ -26,7 +26,7 @@ const protectedKeys = [
   "predictionCurve",
   "weeklyPlan"
 ];
-const databaseUrl = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
+const databaseUrl = process.env.TEST_DATABASE_URL;
 const describeDb = databaseUrl ? describe : describe.skip;
 const now = new Date("2026-07-09T00:00:00.000Z");
 
