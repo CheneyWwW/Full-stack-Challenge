@@ -19,6 +19,7 @@ type ResultResponse = {
   result: {
     bmi: number;
     bmiCategory: string;
+    summary?: string;
     dailyCalories?: number;
     targetDate?: string;
     weeksToTarget?: number;
@@ -110,12 +111,13 @@ export default function Home() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [result, setResult] = useState<ResultResponse | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [status, setStatus] = useState("Preparing your assessment...");
   const [busy, setBusy] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const activeStep = steps[activeIndex];
-  const percent = Math.round(((activeIndex + 1) / steps.length) * 100);
+  const percent = result ? 100 : isAnalyzing ? 92 : Math.round(((activeIndex + 1) / steps.length) * 100);
 
   useEffect(() => {
     let cancelled = false;
@@ -173,21 +175,28 @@ export default function Home() {
       if (activeIndex < steps.length - 1) {
         setActiveIndex((index) => index + 1);
       } else {
-        const submitted = await api<{ result: ResultResponse["result"] }>(
+        await api<{ result: ResultResponse["result"] }>(
           `/api/v1/sessions/${progress.sessionId}/assessment/submit`,
           { method: "POST" }
         );
-        setStatus("Assessment complete.");
-        setResult(
-          await api<ResultResponse>(`/api/v1/sessions/${progress.sessionId}/results`)
-        );
-        if (!submitted.result) setStatus("Assessment complete.");
+        setIsAnalyzing(true);
+        setStatus("Building your preview...");
+        const preview = await api<ResultResponse>(`/api/v1/sessions/${progress.sessionId}/results`);
+        await new Promise((resolve) => window.setTimeout(resolve, 900));
+        setResult(preview);
+        setIsAnalyzing(false);
+        setStatus("Preview ready.");
       }
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Unable to save.");
     } finally {
       setBusy(false);
     }
+  }
+
+  function goBack() {
+    setActiveIndex((index) => Math.max(0, index - 1));
+    setStatus("You can adjust your previous answer.");
   }
 
   async function completeMockPayment() {
@@ -218,11 +227,33 @@ export default function Home() {
           <span className="mark">HW</span>
           <span>Home Wellness</span>
         </div>
+        <div className="funnel-meta" aria-label="Assessment details">
+          <span>2 min quiz</span>
+          <span>Progress saved</span>
+          <span>No card for preview</span>
+        </div>
         <div className="progressbar" aria-label="Assessment progress">
           <span style={{ width: `${percent}%` }} />
         </div>
-        <p className="kicker">{activeStep.label}</p>
-        {!result ? (
+        <p className="kicker">
+          {isAnalyzing ? "Analyzing" : result ? (result.access === "FULL" ? "Full plan" : "Preview ready") : `${activeStep.label} ${activeIndex + 1}/${steps.length}`}
+        </p>
+        {isAnalyzing ? (
+          <section className="analysis">
+            <div className="pulse-ring">
+              <span>{percent}%</span>
+            </div>
+            <h1>Building your plan</h1>
+            <p className="support">
+              We are checking your BMI, target pace, activity level, and result access.
+            </p>
+            <div className="analysis-list">
+              <span>Profile saved</span>
+              <span>Health estimate calculated</span>
+              <span>Preview being prepared</span>
+            </div>
+          </section>
+        ) : !result ? (
           <form onSubmit={saveCurrentStep} className="flow">
             <h1>{activeStep.title}</h1>
             <p className="support">{activeStep.copy}</p>
@@ -338,33 +369,65 @@ export default function Home() {
               </div>
             )}
 
-            <button className="primary" disabled={busy || !progress || !canSubmit}>
-              {!progress ? "Starting..." : activeIndex === steps.length - 1 ? "See My Results" : "Continue"}
-            </button>
+            <div className="button-row">
+              {activeIndex > 0 && (
+                <button className="secondary" type="button" onClick={goBack} disabled={busy}>
+                  Back
+                </button>
+              )}
+              <button className="primary" disabled={busy || !progress || !canSubmit}>
+                {!progress ? "Starting..." : activeIndex === steps.length - 1 ? "See My Results" : "Continue"}
+              </button>
+            </div>
           </form>
         ) : (
           <section className="result">
             <p className="kicker">{result.access === "FULL" ? "Full plan" : "Locked preview"}</p>
             <h1>Your BMI is {result.result.bmi}</h1>
-            <p className="support">Category: {result.result.bmiCategory}</p>
+            <p className="support">
+              {result.result.summary ?? `Category: ${result.result.bmiCategory}. Your preview is ready.`}
+            </p>
             {result.access === "FULL" ? (
-              <div className="result-grid">
-                <div>
+              <>
+                <div className="result-grid">
+                  <div>
                   <strong>{result.result.dailyCalories}</strong>
                   <span>daily calorie target</span>
-                </div>
-                <div>
+                  </div>
+                  <div>
                   <strong>{result.result.targetDate}</strong>
                   <span>predicted goal date</span>
-                </div>
-                <div>
+                  </div>
+                  <div>
                   <strong>{result.result.weeksToTarget}</strong>
                   <span>weeks to target</span>
+                  </div>
                 </div>
-              </div>
+                <div className="forecast-strip">
+                  {(result.result.predictionCurve ?? []).slice(0, 4).map((point) => (
+                    <span key={point.week}>
+                      Week {point.week}: {point.weightKg} kg
+                    </span>
+                  ))}
+                </div>
+              </>
             ) : (
               <>
                 <p className="locked">{result.paywall?.message}</p>
+                <div className="locked-grid">
+                  <div>
+                    <strong>{result.result.bmiCategory}</strong>
+                    <span>BMI category</span>
+                  </div>
+                  <div className="locked-teaser">
+                    <strong>Locked</strong>
+                    <span>Personal target</span>
+                  </div>
+                  <div className="locked-teaser">
+                    <strong>Locked</strong>
+                    <span>Goal timeline</span>
+                  </div>
+                </div>
                 <button className="primary" onClick={() => setCheckoutOpen(true)} disabled={busy}>
                   Unlock Full Plan
                 </button>
@@ -396,6 +459,10 @@ export default function Home() {
               <span>Home Wellness Plan</span>
               <strong>$9.99</strong>
             </div>
+            <div className="mock-card">
+              <span>Mock card</span>
+              <strong>4242 4242 4242 4242</strong>
+            </div>
             <ul className="unlock-list">
               {(result.paywall?.unlocks ?? [
                 "personalized calorie target",
@@ -422,7 +489,7 @@ export default function Home() {
           alt="Pilates workout"
         />
         <div>
-          <p>Built around resumable progress, server-side calculations, and subscription-gated results.</p>
+          <p>Small steps, realistic targets, and a plan that meets you where you are.</p>
           <span>Session: {progress?.sessionId ?? "creating..."}</span>
         </div>
       </aside>
